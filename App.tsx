@@ -18,6 +18,59 @@ interface RegisteredUser extends UserProfile {
   password: string;
 }
 
+interface ErrorBoundaryProps {
+  children: React.ReactNode;
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error: Error | null;
+}
+
+// ERROR BOUNDARY: Catches app crashes (White Screen)
+class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error("Uncaught error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white p-6 text-center">
+          <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-6">
+            <span className="text-4xl">⚠️</span>
+          </div>
+          <h1 className="text-2xl font-bold mb-2">Something went wrong</h1>
+          <p className="text-gray-500 mb-6 max-w-md">The application encountered an unexpected error. This is often due to cached data conflicts.</p>
+          <pre className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg text-xs text-left overflow-auto max-w-lg mb-8 w-full border border-gray-200 dark:border-gray-700">
+            {this.state.error?.toString()}
+          </pre>
+          <button 
+            onClick={() => {
+              localStorage.clear(); 
+              window.location.reload();
+            }}
+            className="px-8 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 shadow-lg transition-transform hover:scale-105"
+          >
+            Clear Cache & Restart
+          </button>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 // Splash Loader Component
 const SplashLoader = () => (
   <div className="fixed inset-0 z-[100] bg-gray-900 flex flex-col items-center justify-center text-white">
@@ -39,12 +92,23 @@ const SplashLoader = () => (
 // Main App Container
 const AppContainer: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>(View.HOME);
-  const [history, setHistory] = useState<GenerationResult[]>([]);
+  
+  // Persistent History
+  const [history, setHistory] = useState<GenerationResult[]>(() => {
+    try {
+      const saved = localStorage.getItem('hg_history');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      console.warn("History parse error", e);
+      return [];
+    }
+  });
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [loadingApp, setLoadingApp] = useState(true);
   
-  // Persistence State with Safety Checks (Prevents JSON Parse Errors)
+  // Persistence State with Safety Checks
   const [user, setUser] = useState<UserProfile | null>(() => {
     try {
       const saved = localStorage.getItem('hg_current_user');
@@ -77,22 +141,21 @@ const AppContainer: React.FC = () => {
   useEffect(() => {
     try {
       localStorage.setItem('hg_users', JSON.stringify(registeredUsers));
-    } catch (e) {
-      console.error("Saving users failed", e);
-    }
+    } catch (e) { console.error("Saving users failed", e); }
   }, [registeredUsers]);
 
   useEffect(() => {
     try {
-      if (user) {
-        localStorage.setItem('hg_current_user', JSON.stringify(user));
-      } else {
-        localStorage.removeItem('hg_current_user');
-      }
-    } catch (e) {
-      console.error("Saving current user failed", e);
-    }
+      if (user) localStorage.setItem('hg_current_user', JSON.stringify(user));
+      else localStorage.removeItem('hg_current_user');
+    } catch (e) { console.error("Saving current user failed", e); }
   }, [user]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('hg_history', JSON.stringify(history));
+    } catch (e) { console.error("Saving history failed", e); }
+  }, [history]);
 
   // Theme Handling
   useEffect(() => {
@@ -159,18 +222,15 @@ const AppContainer: React.FC = () => {
   const handlePasswordUpdate = (currentPass: string, newPass: string): boolean => {
     if (!user) return false;
     
-    // Find the full user record including password
     const userIndex = registeredUsers.findIndex(u => u.email === user.email);
     if (userIndex === -1) return false;
 
     const registeredUser = registeredUsers[userIndex];
 
-    // Check if current password matches
     if (registeredUser.password !== currentPass) {
       return false;
     }
 
-    // Update password
     const updatedUsers = [...registeredUsers];
     updatedUsers[userIndex] = { ...registeredUser, password: newPass };
     setRegisteredUsers(updatedUsers);
@@ -299,9 +359,11 @@ const AppContainer: React.FC = () => {
 };
 
 const App: React.FC = () => (
-  <CustomToastProvider>
-    <AppContainer />
-  </CustomToastProvider>
+  <ErrorBoundary>
+    <CustomToastProvider>
+      <AppContainer />
+    </CustomToastProvider>
+  </ErrorBoundary>
 );
 
 export default App;

@@ -2,12 +2,17 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { Platform } from '../types';
 
 const getAiClient = () => {
-  const apiKey = process.env.API_KEY;
-  if (!apiKey) {
-    throw new Error("API Key is missing");
-  }
+  const apiKey = process.env.API_KEY || ''; // Fail safe for undefined env
+  // We do NOT throw here instantly to allow App to load even if key is missing
   return new GoogleGenAI({ apiKey });
 };
+
+// Helper to check key before call
+const checkApiKey = () => {
+  if (!process.env.API_KEY) {
+    throw new Error("API Key is missing. Please set REACT_APP_API_KEY or VITE_API_KEY.");
+  }
+}
 
 export const generateHashtags = async (
   keyword: string, 
@@ -16,6 +21,7 @@ export const generateHashtags = async (
   language: string = 'English'
 ): Promise<string[]> => {
   try {
+    checkApiKey();
     const ai = getAiClient();
     
     const systemInstruction = `You are a world-class social media strategist. 
@@ -58,7 +64,8 @@ export const generateHashtags = async (
 
   } catch (error) {
     console.error("Gemini Generation Error:", error);
-    return [`#${keyword.replace(/\s+/g, '')}`, `#trending`, `#${platform}`];
+    // Return safe fallback for demo purposes if API fails
+    return [`#${keyword.replace(/\s+/g, '')}`, `#trending`, `#${platform}`, `#viral`];
   }
 };
 
@@ -69,6 +76,7 @@ export const generateBio = async (
   language: string = 'English'
 ): Promise<string> => {
   try {
+    checkApiKey();
     const ai = getAiClient();
     
     const systemInstruction = `You are an expert copywriter for social media profiles.
@@ -97,7 +105,7 @@ export const generateBio = async (
 
   } catch (error) {
     console.error("Gemini Bio Error:", error);
-    return "Social media enthusiast ready to share amazing content! 🚀";
+    return "Social media enthusiast ready to share amazing content! 🚀 (AI Service Unavailable)";
   }
 };
 
@@ -108,6 +116,7 @@ export const generateCreativeContent = async (
   language: string = 'English'
 ): Promise<string> => {
   try {
+    checkApiKey();
     const ai = getAiClient();
     let prompt = "";
     let systemInstruction = `You are a creative social media assistant. Always output your response in ${language}.`;
@@ -147,7 +156,7 @@ export const generateCreativeContent = async (
     return response.text || "Generation failed.";
   } catch (e) {
     console.error(e);
-    return "Error generating content. Please try again.";
+    return "Error generating content. Please try again later.";
   }
 };
 
@@ -157,6 +166,7 @@ export const analyzeContent = async (
   language: string = 'English'
 ): Promise<string> => {
   try {
+    checkApiKey();
     const ai = getAiClient();
     const prompt = type === 'competitor' 
       ? `Analyze this competitor text/strategy and list 3 strengths and 1 weakness: "${content}". Provide the analysis in ${language}.`
