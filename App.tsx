@@ -44,15 +44,25 @@ const AppContainer: React.FC = () => {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [loadingApp, setLoadingApp] = useState(true);
   
-  // Persistence State
+  // Persistence State with Safety Checks (Prevents JSON Parse Errors)
   const [user, setUser] = useState<UserProfile | null>(() => {
-    const saved = localStorage.getItem('hg_current_user');
-    return saved ? JSON.parse(saved) : null;
+    try {
+      const saved = localStorage.getItem('hg_current_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch (e) {
+      console.error("Error parsing user data", e);
+      return null;
+    }
   });
 
   const [registeredUsers, setRegisteredUsers] = useState<RegisteredUser[]>(() => {
-    const saved = localStorage.getItem('hg_users');
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem('hg_users');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      console.error("Error parsing registered users", e);
+      return [];
+    }
   });
 
   // Initial App Load Simulation
@@ -65,14 +75,22 @@ const AppContainer: React.FC = () => {
 
   // Save to Local Storage on Change
   useEffect(() => {
-    localStorage.setItem('hg_users', JSON.stringify(registeredUsers));
+    try {
+      localStorage.setItem('hg_users', JSON.stringify(registeredUsers));
+    } catch (e) {
+      console.error("Saving users failed", e);
+    }
   }, [registeredUsers]);
 
   useEffect(() => {
-    if (user) {
-      localStorage.setItem('hg_current_user', JSON.stringify(user));
-    } else {
-      localStorage.removeItem('hg_current_user');
+    try {
+      if (user) {
+        localStorage.setItem('hg_current_user', JSON.stringify(user));
+      } else {
+        localStorage.removeItem('hg_current_user');
+      }
+    } catch (e) {
+      console.error("Saving current user failed", e);
     }
   }, [user]);
 
@@ -251,8 +269,8 @@ const AppContainer: React.FC = () => {
               isDarkMode={isDarkMode}
               toggleTheme={toggleTheme}
             />
-            <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 scroll-smooth">
-              <div className="max-w-6xl mx-auto">
+            <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 scroll-smooth relative">
+              <div className="max-w-6xl mx-auto pb-10">
                 {renderContent()}
               </div>
             </main>
