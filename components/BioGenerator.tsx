@@ -49,9 +49,13 @@ export const BioGenerator: React.FC<BioGeneratorProps> = ({ onGenerate, onBack }
     }
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(result);
-    showToast('Bio copied to clipboard!', 'success');
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(result);
+      showToast('Bio copied to clipboard!', 'success');
+    } catch (err) {
+      showToast('Failed to copy to clipboard', 'error');
+    }
   };
 
   // Lottie-style Loader
