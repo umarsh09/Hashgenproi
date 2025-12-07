@@ -6,12 +6,6 @@
     <title>HashtagGenius AI - Viral Growth Tool</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-      // CRITICAL POLYFILL FOR VERCEL/BROWSER
-      // Prevents "process is not defined" crash which causes white screen
-      window.process = window.process || {};
-      window.process.env = window.process.env || {};
-      window.process.env.NODE_ENV = window.process.env.NODE_ENV || 'production';
-      
       // Tailwind Config
       tailwind.config = {
         darkMode: 'class',
@@ -104,8 +98,7 @@
     "@google/genai": "https://aistudiocdn.com/@google/genai@^1.31.0",
     "react/": "https://aistudiocdn.com/react@^19.2.1/",
     "react": "https://aistudiocdn.com/react@^19.2.1",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
-    "react-hot-toast": "https://aistudiocdn.com/react-hot-toast@^2.6.0"
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/"
   }
 }
 </script>

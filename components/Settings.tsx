@@ -5,7 +5,7 @@ import { useToast } from './CustomToast';
 interface SettingsProps {
   user: UserProfile;
   onUpdateUser: (user: UserProfile) => void;
-  onUpdatePassword: (currentPass: string, newPass: string) => boolean;
+  onUpdatePassword: (currentPass: string, newPass: string) => Promise<boolean>;
   isDarkMode: boolean;
   toggleTheme: () => void;
   onBack?: () => void;
@@ -43,7 +43,7 @@ export const Settings: React.FC<SettingsProps> = ({ user, onUpdateUser, onUpdate
     showToast('Profile saved successfully!', 'success');
   };
 
-  const handleUpdatePassword = () => {
+  const handleUpdatePassword = async () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
       showToast('Please fill in all password fields', 'error');
       return;
@@ -64,16 +64,20 @@ export const Settings: React.FC<SettingsProps> = ({ user, onUpdateUser, onUpdate
       return;
     }
 
-    const success = onUpdatePassword(currentPassword, newPassword);
-    
-    if (success) {
-      showToast('Password updated successfully!', 'success');
-      // Reset fields
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
-    } else {
-      showToast('Incorrect current password', 'error');
+    try {
+      const success = await onUpdatePassword(currentPassword, newPassword);
+
+      if (success) {
+        showToast('Password updated successfully!', 'success');
+        // Reset fields
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+      } else {
+        showToast('Incorrect current password', 'error');
+      }
+    } catch (err) {
+      showToast('An error occurred. Please try again.', 'error');
     }
   };
 
