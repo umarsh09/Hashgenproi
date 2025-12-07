@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HashtagGenius AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            animation: {
+              'float': 'float 6s ease-in-out infinite',
+              'pulse-glow': 'pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'spin-slow': 'spin 3s linear infinite',
+              'fade-in': 'fadeIn 0.5s ease-out',
+              'slide-up': 'slideUp 0.5s ease-out',
+            },
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-20px)' },
+              },
+              'pulse-glow': {
+                '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+                '50%': { opacity: '.5', transform: 'scale(1.1)' },
+              },
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              slideUp: {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      body { font-family: 'Inter', sans-serif; }
+      /* Custom scrollbar */
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
+      ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+      
+      .light ::-webkit-scrollbar-thumb { background: #d1d5db; }
+      .light ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+      /* 3D Card Effect */
+      .card-3d-container {
+        perspective: 1000px;
+      }
+      .card-3d {
+        transition: transform 0.2s ease-out, box-shadow 0.2s ease;
+        transform-style: preserve-3d;
+      }
+      .card-3d:hover {
+        transform: rotateX(2deg) rotateY(2deg) scale(1.02);
+        z-index: 10;
+      }
+
+      /* Lottie-style Loader CSS */
+      .loader-ring {
+        position: absolute;
+        border-radius: 50%;
+        animation: ripple 2s infinite;
+        border: 2px solid rgba(99, 102, 241, 0.5); /* Indigo */
+      }
+      .loader-ring:nth-child(1) { width: 100%; height: 100%; animation-delay: 0s; }
+      .loader-ring:nth-child(2) { width: 80%; height: 80%; animation-delay: 0.3s; }
+      .loader-ring:nth-child(3) { width: 60%; height: 60%; animation-delay: 0.6s; }
+
+      @keyframes ripple {
+        0% { transform: scale(0.8); opacity: 1; border-width: 4px; }
+        100% { transform: scale(1.5); opacity: 0; border-width: 0px; }
+      }
+      
+      .loader-core {
+        animation: breathe 3s ease-in-out infinite;
+      }
+      @keyframes breathe {
+        0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(99, 102, 241, 0.4); }
+        50% { transform: scale(1.1); box-shadow: 0 0 40px rgba(168, 85, 247, 0.6); }
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.31.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "react-hot-toast": "https://aistudiocdn.com/react-hot-toast@^2.6.0"
+  }
+}
+</script>
+</head>
+  <body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-white antialiased transition-colors duration-300">
+    <div id="root"></div>
+  </body>
+</html>
