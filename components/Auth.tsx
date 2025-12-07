@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
 interface AuthProps {
-  onLogin: (email: string, pass: string) => boolean;
-  onRegister: (name: string, email: string, pass: string) => boolean;
+  onLogin: (email: string, pass: string) => Promise<boolean>;
+  onRegister: (name: string, email: string, pass: string) => Promise<boolean>;
   onBack: () => void;
   initialMode?: 'login' | 'signup';
 }
@@ -28,10 +28,10 @@ export const Auth: React.FC<AuthProps> = ({ onLogin, onRegister, onBack, initial
       );
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
-    const newFieldErrors: any = {};
+    const newFieldErrors: {name?: boolean, email?: boolean, password?: boolean} = {};
     let hasError = false;
 
     // Validation
@@ -56,29 +56,26 @@ export const Auth: React.FC<AuthProps> = ({ onLogin, onRegister, onBack, initial
 
     setFieldErrors({});
     setLoading(true);
-    
-    // Simulate API delay
-    setTimeout(() => {
-      setLoading(false);
-      
+
+    try {
       if (isLogin) {
-        const success = onLogin(email, password);
-        if (success) {
-           // Success handled by parent
-        } else {
-            setErrorMsg("Invalid email or password. Please try again.");
-            setFieldErrors({ email: true, password: true });
+        const success = await onLogin(email, password);
+        if (!success) {
+          setErrorMsg("Invalid email or password. Please try again.");
+          setFieldErrors({ email: true, password: true });
         }
       } else {
-        const success = onRegister(name, email, password);
-        if (success) {
-           // Success handled by parent
-        } else {
-            setErrorMsg("An account with this email already exists.");
-            setFieldErrors({ email: true });
+        const success = await onRegister(name, email, password);
+        if (!success) {
+          setErrorMsg("An account with this email already exists.");
+          setFieldErrors({ email: true });
         }
       }
-    }, 1000);
+    } catch (err) {
+      setErrorMsg("An unexpected error occurred. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

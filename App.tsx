@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
 import { Generator } from './components/Generator';
@@ -13,9 +13,18 @@ import { Settings } from './components/Settings';
 import { CustomToastProvider } from './components/CustomToast';
 import { View, GenerationResult, UserProfile } from './types';
 
+// Simple password hashing using Web Crypto API (browser-safe)
+const hashPassword = async (password: string): Promise<string> => {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password + 'hg_salt_2024'); // Add salt
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+};
+
 // Mock database type
 interface RegisteredUser extends UserProfile {
-  password: string;
+  passwordHash: string; // Store hash, not plain password
 }
 
 interface ErrorBoundaryProps {
@@ -105,7 +114,15 @@ const AppContainer: React.FC = () => {
   });
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  // Dark mode with localStorage persistence
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    try {
+      const saved = localStorage.getItem('hg_dark_mode');
+      return saved !== null ? JSON.parse(saved) : true; // Default to dark
+    } catch {
+      return true;
+    }
+  });
   const [loadingApp, setLoadingApp] = useState(true);
   
   // Persistence State with Safety Checks
@@ -157,56 +174,72 @@ const AppContainer: React.FC = () => {
     } catch (e) { console.error("Saving history failed", e); }
   }, [history]);
 
-  // Theme Handling
+  // Theme Handling with persistence
   useEffect(() => {
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
+    // Persist to localStorage
+    try {
+      localStorage.setItem('hg_dark_mode', JSON.stringify(isDarkMode));
+    } catch (e) { console.error("Saving theme failed", e); }
   }, [isDarkMode]);
 
   const toggleTheme = () => setIsDarkMode(!isDarkMode);
 
-  // AUTHENTICATION LOGIC
-  const handleLogin = (email: string, pass: string): boolean => {
-    const foundUser = registeredUsers.find(u => u.email === email && u.password === pass);
-    if (foundUser) {
-      setUser({
-        name: foundUser.name,
-        email: foundUser.email,
-        avatar: foundUser.avatar,
-        plan: foundUser.plan
-      });
-      setCurrentView(View.HOME);
-      return true;
+  // AUTHENTICATION LOGIC with password hashing
+  const handleLogin = useCallback(async (email: string, pass: string): Promise<boolean> => {
+    try {
+      const passHash = await hashPassword(pass);
+      const foundUser = registeredUsers.find(u => u.email === email && u.passwordHash === passHash);
+      if (foundUser) {
+        setUser({
+          name: foundUser.name,
+          email: foundUser.email,
+          avatar: foundUser.avatar,
+          plan: foundUser.plan
+        });
+        setCurrentView(View.HOME);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      console.error("Login error", e);
+      return false;
     }
-    return false;
-  };
+  }, [registeredUsers]);
 
-  const handleRegister = (name: string, email: string, pass: string): boolean => {
+  const handleRegister = useCallback(async (name: string, email: string, pass: string): Promise<boolean> => {
     if (registeredUsers.find(u => u.email === email)) {
       return false; // User exists
     }
-    const newUser: RegisteredUser = {
-      name,
-      email,
-      password: pass,
-      avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${name}`,
-      plan: 'free'
-    };
-    setRegisteredUsers([...registeredUsers, newUser]);
-    
-    // Auto login after register
-    setUser({
-      name: newUser.name,
-      email: newUser.email,
-      avatar: newUser.avatar,
-      plan: newUser.plan
-    });
-    setCurrentView(View.HOME);
-    return true;
-  };
+    try {
+      const passHash = await hashPassword(pass);
+      const newUser: RegisteredUser = {
+        name,
+        email,
+        passwordHash: passHash,
+        avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${name}`,
+        plan: 'free'
+      };
+      setRegisteredUsers([...registeredUsers, newUser]);
+
+      // Auto login after register
+      setUser({
+        name: newUser.name,
+        email: newUser.email,
+        avatar: newUser.avatar,
+        plan: newUser.plan
+      });
+      setCurrentView(View.HOME);
+      return true;
+    } catch (e) {
+      console.error("Registration error", e);
+      return false;
+    }
+  }, [registeredUsers]);
 
   const handleLogout = () => {
     setUser(null);
@@ -219,23 +252,30 @@ const AppContainer: React.FC = () => {
     setRegisteredUsers(prev => prev.map(u => u.email === updatedUser.email ? { ...u, ...updatedUser } : u));
   };
 
-  const handlePasswordUpdate = (currentPass: string, newPass: string): boolean => {
+  const handlePasswordUpdate = useCallback(async (currentPass: string, newPass: string): Promise<boolean> => {
     if (!user) return false;
-    
+
     const userIndex = registeredUsers.findIndex(u => u.email === user.email);
     if (userIndex === -1) return false;
 
-    const registeredUser = registeredUsers[userIndex];
+    try {
+      const registeredUser = registeredUsers[userIndex];
+      const currentHash = await hashPassword(currentPass);
 
-    if (registeredUser.password !== currentPass) {
+      if (registeredUser.passwordHash !== currentHash) {
+        return false;
+      }
+
+      const newHash = await hashPassword(newPass);
+      const updatedUsers = [...registeredUsers];
+      updatedUsers[userIndex] = { ...registeredUser, passwordHash: newHash };
+      setRegisteredUsers(updatedUsers);
+      return true;
+    } catch (e) {
+      console.error("Password update error", e);
       return false;
     }
-
-    const updatedUsers = [...registeredUsers];
-    updatedUsers[userIndex] = { ...registeredUser, password: newPass };
-    setRegisteredUsers(updatedUsers);
-    return true;
-  };
+  }, [user, registeredUsers]);
 
   const addToHistory = (item: GenerationResult) => {
     setHistory(prev => [item, ...prev]);

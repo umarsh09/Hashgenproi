@@ -406,7 +406,7 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
             ))}
           </div>
           <div className="pt-8 border-t border-gray-100 dark:border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4">
-             <p className="text-gray-400 text-sm">© 2024 HashtagGenius AI. All rights reserved.</p>
+             <p className="text-gray-400 text-sm">© 2025 HashtagGenius AI. All rights reserved.</p>
              <div className="flex gap-4">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/X_icon_2.svg" className="w-6 h-6 opacity-60 hover:opacity-100 cursor-pointer" alt="X" />
                 <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" className="w-6 h-6 opacity-60 hover:opacity-100 cursor-pointer" alt="Instagram" />
