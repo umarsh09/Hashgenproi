@@ -19,14 +19,6 @@ export default defineConfig({
   build: {
     target: 'esnext',
     minify: 'esbuild',
-    sourcemap: false,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          ai: ['@google/genai']
-        }
-      }
-    }
+    sourcemap: false
   }
 });
