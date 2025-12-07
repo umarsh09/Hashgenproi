@@ -31,7 +31,12 @@ export const Settings: React.FC<SettingsProps> = ({ user, onUpdateUser, onUpdate
         showToast('Image too large. Max 5MB.', 'error');
         return;
       }
-      
+
+      // Revoke old blob URL to prevent memory leak
+      if (user.avatar && user.avatar.startsWith('blob:')) {
+        URL.revokeObjectURL(user.avatar);
+      }
+
       const imageUrl = URL.createObjectURL(file);
       onUpdateUser({ ...user, avatar: imageUrl });
       showToast('Profile picture updated!', 'success');

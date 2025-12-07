@@ -11,10 +11,14 @@ interface HistoryProps {
 export const History: React.FC<HistoryProps> = ({ history, onBack }) => {
   const { showToast } = useToast();
 
-  const copyContent = (result: string[] | string) => {
+  const copyContent = async (result: string[] | string) => {
     const text = Array.isArray(result) ? result.join(' ') : result;
-    navigator.clipboard.writeText(text);
-    showToast('Copied to clipboard!', 'success');
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast('Copied to clipboard!', 'success');
+    } catch (err) {
+      showToast('Failed to copy to clipboard', 'error');
+    }
   };
 
   if (history.length === 0) {

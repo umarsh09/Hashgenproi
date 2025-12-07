@@ -70,7 +70,6 @@ export const generateHashtags = async (
     return tags.map(tag => tag.startsWith('#') ? tag : `#${tag}`);
 
   } catch (error) {
-    console.error("Gemini Generation Error:", error);
     // Return safe fallback for demo purposes if API fails
     return [`#${keyword.replace(/\s+/g, '')}`, `#trending`, `#${platform}`, `#viral`];
   }
@@ -111,8 +110,7 @@ export const generateBio = async (
     return response.text || "Could not generate bio.";
 
   } catch (error) {
-    console.error("Gemini Bio Error:", error);
-    return "Social media enthusiast ready to share amazing content! 🚀 (AI Service Unavailable)";
+    return "Social media enthusiast ready to share amazing content! (AI Service Unavailable)";
   }
 };
 
@@ -162,7 +160,6 @@ export const generateCreativeContent = async (
 
     return response.text || "Generation failed.";
   } catch (e) {
-    console.error(e);
     return "Error generating content. Please try again later.";
   }
 };

@@ -50,9 +50,13 @@ export const UniversalGenerator: React.FC<UniversalGeneratorProps> = ({
     }
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(result);
-    showToast('Copied to clipboard!', 'success');
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(result);
+      showToast('Copied to clipboard!', 'success');
+    } catch (err) {
+      showToast('Failed to copy to clipboard', 'error');
+    }
   };
 
   // Lottie-style Loader
