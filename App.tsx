@@ -379,14 +379,16 @@ const AppContainer: React.FC = () => {
       ) : (
         <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
           {currentView !== View.AUTH && (
-            <Navbar 
-              user={user} 
-              isAppMode={false} 
-              onViewChange={setCurrentView} 
-              onLogout={handleLogout} 
+            <Navbar
+              user={user}
+              isAppMode={false}
+              onViewChange={setCurrentView}
+              onLogout={handleLogout}
               toggleSidebar={() => {}}
               isDarkMode={isDarkMode}
               toggleTheme={toggleTheme}
+              onLoginClick={() => setCurrentView(View.AUTH)}
+              onRegisterClick={() => setCurrentView(View.AUTH)}
             />
           )}
           <main className="flex-grow">
