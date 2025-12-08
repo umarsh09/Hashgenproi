@@ -14,17 +14,17 @@ interface HomeProps {
 export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = [], isDashboard = false, onNavigate }) => {
   // Features Linked to Views
   const dashboardFeatures = [
-    { title: 'Hashtag Generator', icon: '⚡', desc: 'Viral tags for any platform.', view: View.GENERATOR_HASHTAG, color: 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' },
-    { title: 'Bio Writer', icon: '✍️', desc: 'Craft the perfect profile bio.', view: View.GENERATOR_BIO, color: 'bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400' },
-    { title: 'Caption AI', icon: '📝', desc: 'Write engaging post captions.', view: View.GENERATOR_CAPTION, color: 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' },
-    { title: 'Reels Script', icon: '🎬', desc: 'Video scripts that hook viewers.', view: View.GENERATOR_SCRIPT, color: 'bg-pink-50 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400' },
-    { title: 'Story Ideas', icon: '💡', desc: 'Never run out of content ideas.', view: View.GENERATOR_IDEA, color: 'bg-yellow-50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400' },
-    { title: 'Competitor Spy', icon: '🕵️', desc: 'Analyze top performing profiles.', view: View.ANALYZER_COMPETITOR, color: 'bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400' },
-    { title: 'Profile Audit', icon: '🔍', desc: 'Get a score on your profile.', view: View.ANALYZER_AUDIT, color: 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400' },
-    { title: 'Emoji Maker', icon: '🎨', desc: 'Custom emoji combinations.', view: View.GENERATOR_EMOJI, color: 'bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400' },
-    { title: 'Scheduler', icon: '📅', desc: 'Plan your posts ahead.', view: View.GENERATOR_SCHEDULE, color: 'bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400' },
-    { title: 'Trend Watch', icon: '🔥', desc: 'Real-time viral topics.', view: View.GENERATOR_TREND, color: 'bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400' },
-    { title: 'Email Writer', icon: '📧', desc: 'Draft outreach emails.', view: View.GENERATOR_EMAIL, color: 'bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400' },
+    { title: 'Hashtag Generator', icon: '⚡', desc: 'Viral tags for any platform.', view: View.GENERATOR_HASHTAG, color: 'from-indigo-500 to-purple-500', bgColor: 'bg-indigo-50 dark:bg-indigo-900/20' },
+    { title: 'Bio Writer', icon: '✍️', desc: 'Craft the perfect profile bio.', view: View.GENERATOR_BIO, color: 'from-purple-500 to-pink-500', bgColor: 'bg-purple-50 dark:bg-purple-900/20' },
+    { title: 'Caption AI', icon: '📝', desc: 'Write engaging post captions.', view: View.GENERATOR_CAPTION, color: 'from-blue-500 to-cyan-500', bgColor: 'bg-blue-50 dark:bg-blue-900/20' },
+    { title: 'Reels Script', icon: '🎬', desc: 'Video scripts that hook viewers.', view: View.GENERATOR_SCRIPT, color: 'from-pink-500 to-rose-500', bgColor: 'bg-pink-50 dark:bg-pink-900/20' },
+    { title: 'Story Ideas', icon: '💡', desc: 'Never run out of content ideas.', view: View.GENERATOR_IDEA, color: 'from-yellow-500 to-orange-500', bgColor: 'bg-yellow-50 dark:bg-yellow-900/20' },
+    { title: 'Competitor Spy', icon: '🕵️', desc: 'Analyze top performing profiles.', view: View.ANALYZER_COMPETITOR, color: 'from-red-500 to-pink-500', bgColor: 'bg-red-50 dark:bg-red-900/20' },
+    { title: 'Profile Audit', icon: '🔍', desc: 'Get a score on your profile.', view: View.ANALYZER_AUDIT, color: 'from-green-500 to-emerald-500', bgColor: 'bg-green-50 dark:bg-green-900/20' },
+    { title: 'Emoji Maker', icon: '🎨', desc: 'Custom emoji combinations.', view: View.GENERATOR_EMOJI, color: 'from-orange-500 to-amber-500', bgColor: 'bg-orange-50 dark:bg-orange-900/20' },
+    { title: 'Scheduler', icon: '📅', desc: 'Plan your posts ahead.', view: View.GENERATOR_SCHEDULE, color: 'from-teal-500 to-cyan-500', bgColor: 'bg-teal-50 dark:bg-teal-900/20' },
+    { title: 'Trend Watch', icon: '🔥', desc: 'Real-time viral topics.', view: View.GENERATOR_TREND, color: 'from-rose-500 to-red-500', bgColor: 'bg-rose-50 dark:bg-rose-900/20' },
+    { title: 'Email Writer', icon: '📧', desc: 'Draft outreach emails.', view: View.GENERATOR_EMAIL, color: 'from-cyan-500 to-blue-500', bgColor: 'bg-cyan-50 dark:bg-cyan-900/20' },
   ];
 
   const faqs = [
@@ -55,170 +55,251 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
   // DASHBOARD VIEW (Logged In)
   if (isDashboard) {
     const totalGenerations = history.length;
-    const creditsLeft = user?.plan === 'free' ? 5 - (history.filter(h => new Date(h.timestamp).toDateString() === new Date().toDateString()).length) : '∞';
-    const recentActivity = history.slice(0, 3);
+    const todayGenerations = history.filter(h => new Date(h.timestamp).toDateString() === new Date().toDateString()).length;
+    const creditsLeft = user?.plan === 'free' ? Math.max(0, 5 - todayGenerations) : '∞';
+    const recentActivity = history.slice(0, 5);
 
     return (
       <div className="flex flex-col animate-fade-in space-y-8 pb-12">
-        {/* Welcome Section */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
-              Dashboard
-            </h1>
-            <p className="text-gray-500 dark:text-gray-400 mt-1">
-              Welcome back, <span className="text-indigo-600 dark:text-indigo-400 font-semibold">{user?.name}</span>.
-            </p>
+        {/* Welcome Banner */}
+        <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 rounded-3xl p-8 text-white">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 left-0 w-40 h-40 bg-white rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 right-0 w-60 h-60 bg-white rounded-full blur-3xl"></div>
           </div>
-          <button 
-             onClick={onStart}
-             className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/30 transition-all transform hover:-translate-y-1 hover:shadow-indigo-500/50 flex items-center gap-2 self-start md:self-auto"
+
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <img
+                  src={user?.avatar}
+                  alt="Avatar"
+                  className="w-14 h-14 rounded-2xl border-2 border-white/30 shadow-lg"
+                />
+                <div>
+                  <p className="text-indigo-100 text-sm">Welcome back,</p>
+                  <h1 className="text-2xl md:text-3xl font-bold">{user?.name}</h1>
+                </div>
+              </div>
+              <p className="text-indigo-100 mt-2 max-w-md">
+                Ready to create viral content? Your AI-powered creative studio awaits.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={onStart}
+                className="px-6 py-3.5 bg-white text-indigo-600 font-bold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 flex items-center justify-center gap-2"
+              >
+                <span>⚡</span> Quick Generate
+              </button>
+              <button
+                onClick={() => onNavigate?.(View.HISTORY)}
+                className="px-6 py-3.5 bg-white/20 backdrop-blur-sm text-white font-semibold rounded-xl border border-white/30 hover:bg-white/30 transition-all flex items-center justify-center gap-2"
+              >
+                <span>📊</span> View History
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-lg transition-all group">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white text-xl shadow-lg shadow-blue-500/20">
+                📊
+              </div>
+              <span className="text-xs font-medium text-green-500 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">
+                +{todayGenerations} today
+              </span>
+            </div>
+            <h3 className="text-3xl font-bold text-gray-900 dark:text-white">{totalGenerations}</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Total Generated</p>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-lg transition-all">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center text-white text-xl shadow-lg shadow-yellow-500/20">
+                🪙
+              </div>
+              <span className={`text-xs font-medium px-2 py-1 rounded-full ${user?.plan === 'free' ? 'text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20' : 'text-green-500 bg-green-50 dark:bg-green-900/20'}`}>
+                {user?.plan === 'free' ? 'Free Plan' : 'Unlimited'}
+              </span>
+            </div>
+            <h3 className="text-3xl font-bold text-gray-900 dark:text-white">{creditsLeft}</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Credits Left</p>
+            {user?.plan === 'free' && (
+              <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full mt-3 overflow-hidden">
+                <div
+                  className="bg-gradient-to-r from-yellow-500 to-orange-500 h-full rounded-full transition-all"
+                  style={{ width: `${(Number(creditsLeft)/5)*100}%` }}
+                ></div>
+              </div>
+            )}
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-lg transition-all">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-xl shadow-lg shadow-purple-500/20">
+                💾
+              </div>
+            </div>
+            <h3 className="text-3xl font-bold text-gray-900 dark:text-white">{history.length}</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Saved Items</p>
+          </div>
+
+          <div
+            onClick={onPricing}
+            className="bg-gradient-to-br from-indigo-500 to-purple-600 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all cursor-pointer group relative overflow-hidden"
           >
-             <span>⚡</span> Quick Generate
-          </button>
+            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-xl">
+                  💎
+                </div>
+                <svg className="w-5 h-5 text-white/70 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+              <h3 className="text-3xl font-bold text-white capitalize">{user?.plan}</h3>
+              <p className="text-sm text-indigo-100 mt-1">Upgrade Plan →</p>
+            </div>
+          </div>
         </div>
 
-        {/* Analytics Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 card-3d-container">
-            <div className="card-3d bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl flex flex-col justify-between">
-                <div className="flex items-center justify-between mb-4">
-                    <span className="text-gray-500 dark:text-gray-400 font-medium text-sm">Total Generated</span>
-                    <span className="p-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg">📊</span>
-                </div>
-                <div>
-                    <h3 className="text-3xl font-bold text-gray-900 dark:text-white">{totalGenerations}</h3>
-                    <p className="text-xs text-green-500 mt-1 flex items-center">
-                       <span className="mr-1">▲</span> +{history.filter(h => new Date(h.timestamp) > new Date(Date.now() - 86400000)).length} today
-                    </p>
-                </div>
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Usage Chart */}
+          <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Weekly Activity</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Your content generation trends</p>
+              </div>
+              <select className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-sm rounded-xl px-4 py-2 text-gray-600 dark:text-gray-300 outline-none focus:ring-2 focus:ring-indigo-500">
+                <option>Last 7 Days</option>
+                <option>Last 30 Days</option>
+              </select>
             </div>
-
-            <div className="card-3d bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl flex flex-col justify-between">
-                <div className="flex items-center justify-between mb-4">
-                    <span className="text-gray-500 dark:text-gray-400 font-medium text-sm">Daily Credits</span>
-                    <span className="p-2 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 rounded-lg">🪙</span>
-                </div>
-                <div>
-                    <h3 className="text-3xl font-bold text-gray-900 dark:text-white">{creditsLeft}</h3>
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 h-1.5 rounded-full mt-2 overflow-hidden">
-                        <div className="bg-yellow-500 h-full rounded-full" style={{ width: user?.plan === 'free' ? `${(Number(creditsLeft)/5)*100}%` : '100%' }}></div>
-                    </div>
-                </div>
-            </div>
-
-             <div className="card-3d bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl flex flex-col justify-between">
-                <div className="flex items-center justify-between mb-4">
-                    <span className="text-gray-500 dark:text-gray-400 font-medium text-sm">Saved Items</span>
-                    <span className="p-2 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-lg">💾</span>
-                </div>
-                <div>
-                    <h3 className="text-3xl font-bold text-gray-900 dark:text-white">{history.length}</h3>
-                    <p className="text-xs text-gray-500 mt-1">
-                       In history
-                    </p>
-                </div>
-            </div>
-
-            <div className="card-3d bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl flex flex-col justify-between relative overflow-hidden group cursor-pointer" onClick={onPricing}>
-                 <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                 <div className="relative z-10">
-                    <div className="flex items-center justify-between mb-4">
-                        <span className="text-gray-500 dark:text-gray-400 font-medium group-hover:text-indigo-100 text-sm">Plan Status</span>
-                        <span className="p-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg group-hover:bg-white/20 group-hover:text-white">💎</span>
-                    </div>
-                    <div>
-                        <h3 className="text-3xl font-bold text-gray-900 dark:text-white group-hover:text-white capitalize">{user?.plan}</h3>
-                        <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-1 group-hover:text-indigo-100">
-                           Upgrade now →
-                        </p>
-                    </div>
-                 </div>
-            </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Chart Section */}
-            <div className="lg:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
-                <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Usage Analytics</h3>
-                    <select className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-sm rounded-lg px-3 py-1 text-gray-600 dark:text-gray-300 outline-none">
-                        <option>Last 7 Days</option>
-                        <option>Last 30 Days</option>
-                    </select>
-                </div>
-                {/* Visual Chart Mockup */}
-                <div className="h-64 w-full flex items-end justify-between gap-2 px-2">
-                    {[35, 55, 40, 70, 45, 90, 65].map((h, i) => (
-                        <div key={i} className="flex flex-col items-center gap-2 flex-1 group cursor-pointer">
-                            <div className="relative w-full rounded-t-lg bg-indigo-50 dark:bg-indigo-900/20 h-full flex items-end overflow-hidden">
-                                 <div 
-                                    className="w-full bg-indigo-500 dark:bg-indigo-500/80 rounded-t-lg transition-all duration-500 group-hover:bg-indigo-400 relative" 
-                                    style={{ height: `${h}%` }}
-                                 >
-                                    <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                                        {h}
-                                    </div>
-                                 </div>
-                            </div>
-                            <span className="text-xs text-gray-400">{['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i]}</span>
+            <div className="p-6">
+              <div className="h-64 w-full flex items-end justify-between gap-3">
+                {[35, 55, 40, 70, 45, 90, 65].map((h, i) => (
+                  <div key={i} className="flex flex-col items-center gap-3 flex-1 group cursor-pointer">
+                    <div className="relative w-full rounded-xl bg-gray-100 dark:bg-gray-900 h-full flex items-end overflow-hidden">
+                      <div
+                        className="w-full bg-gradient-to-t from-indigo-600 to-purple-500 rounded-xl transition-all duration-500 group-hover:from-indigo-500 group-hover:to-purple-400 relative"
+                        style={{ height: `${h}%` }}
+                      >
+                        <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs font-bold py-1.5 px-3 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
+                          {h}
                         </div>
-                    ))}
-                </div>
-            </div>
-
-            {/* Recent Activity */}
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">Recent Activity</h3>
-                <div className="space-y-6">
-                    {recentActivity.length > 0 ? recentActivity.map((item, i) => (
-                        <div key={i} className="flex gap-4 items-start group">
-                             <div className={`mt-1 w-8 h-8 rounded-full flex items-center justify-center text-xs flex-shrink-0 transition-transform group-hover:scale-110 ${item.type === 'bio' ? 'bg-purple-100 text-purple-600' : 'bg-blue-100 text-blue-600'}`}>
-                                {item.type === 'bio' ? '✍️' : (item.type === 'hashtag' ? '#' : '✨')}
-                             </div>
-                             <div>
-                                 <p className="text-sm font-medium text-gray-900 dark:text-white line-clamp-1">{item.keyword}</p>
-                                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 capitalize">
-                                    {item.type} • {new Date(item.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                                 </p>
-                             </div>
-                        </div>
-                    )) : (
-                        <p className="text-gray-500 text-sm text-center py-8">No activity yet. Start generating!</p>
-                    )}
-                    {recentActivity.length > 0 && (
-                        <button onClick={() => onNavigate?.(View.HISTORY)} className="w-full py-2 text-sm text-center text-indigo-600 dark:text-indigo-400 font-medium hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-colors">
-                            View Full History
-                        </button>
-                    )}
-                </div>
-            </div>
-        </div>
-
-        {/* Tools Grid - 3D Perspective */}
-        <div>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-                <span>🛠️</span> Creative Studio
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 card-3d-container">
-                {dashboardFeatures.map((feature, idx) => (
-                <div 
-                    key={idx}
-                    onClick={() => onNavigate?.(feature.view)}
-                    className="card-3d group p-5 rounded-2xl border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-indigo-500/50 cursor-pointer"
-                >
-                    <div className="flex items-center justify-between mb-3">
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl ${feature.color}`}>
-                            {feature.icon}
-                        </div>
-                        <div className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400">
-                            →
-                        </div>
+                      </div>
                     </div>
-                    <h3 className="text-base font-bold text-gray-900 dark:text-white mb-1 group-hover:text-indigo-500 transition-colors">{feature.title}</h3>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{feature.desc}</p>
-                </div>
+                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400">{['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i]}</span>
+                  </div>
                 ))}
+              </div>
             </div>
+          </div>
+
+          {/* Recent Activity */}
+          <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-gray-100 dark:border-gray-700">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white">Recent Activity</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Your latest generations</p>
+            </div>
+            <div className="p-4">
+              {recentActivity.length > 0 ? (
+                <div className="space-y-3">
+                  {recentActivity.map((item, i) => (
+                    <div key={i} className="flex gap-4 items-center p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors group cursor-pointer">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm flex-shrink-0 ${
+                        item.type === 'bio' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400' :
+                        item.type === 'hashtag' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' :
+                        'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400'
+                      }`}>
+                        {item.type === 'bio' ? '✍️' : (item.type === 'hashtag' ? '#' : '✨')}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{item.keyword}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 capitalize">
+                          {item.type} • {new Date(item.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                        </p>
+                      </div>
+                      <svg className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-2xl">
+                    📭
+                  </div>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">No activity yet</p>
+                  <p className="text-gray-400 dark:text-gray-500 text-xs mt-1">Start generating to see history</p>
+                </div>
+              )}
+            </div>
+            {recentActivity.length > 0 && (
+              <div className="px-4 pb-4">
+                <button
+                  onClick={() => onNavigate?.(View.HISTORY)}
+                  className="w-full py-3 text-sm text-center text-indigo-600 dark:text-indigo-400 font-semibold hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-xl transition-colors"
+                >
+                  View Full History →
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Creative Studio - Tools Grid */}
+        <div>
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Creative Studio</h2>
+              <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">AI-powered tools for content creation</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+            {dashboardFeatures.map((feature, idx) => (
+              <div
+                key={idx}
+                onClick={() => onNavigate?.(feature.view)}
+                className="group p-5 rounded-2xl border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-indigo-500/50 dark:hover:border-indigo-500/50 cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className={`w-12 h-12 rounded-xl ${feature.bgColor} flex items-center justify-center text-2xl group-hover:scale-110 transition-transform`}>
+                    {feature.icon}
+                  </div>
+                  <svg className="w-5 h-5 text-gray-300 dark:text-gray-600 group-hover:text-indigo-500 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+                <h3 className="text-base font-bold text-gray-900 dark:text-white mb-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{feature.title}</h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{feature.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Quick Tips */}
+        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-2xl p-6 border border-indigo-100 dark:border-indigo-900/30">
+          <div className="flex items-start gap-4">
+            <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-xl flex-shrink-0">
+              💡
+            </div>
+            <div>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-1">Pro Tip</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Use specific keywords and descriptions for better AI-generated content. The more context you provide, the more relevant your hashtags and captions will be!
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -227,7 +308,7 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
   // PUBLIC LANDING PAGE
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300 overflow-x-hidden">
-      
+
       {/* Hero Section */}
       <section className="relative pt-20 pb-32 px-6 text-center overflow-hidden">
         {/* Background Effects */}
@@ -260,29 +341,29 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
             Stop guessing. <br />
             Start <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 animate-pulse-glow">Going Viral.</span>
           </h1>
-          
+
           <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            Generate context-aware hashtags, compelling bios, and captions in seconds. 
+            Generate context-aware hashtags, compelling bios, and captions in seconds.
             The only AI tool you need for social media growth.
           </p>
 
           <SocialIcons />
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-5 pt-8">
-            <button 
+            <button
               onClick={onStart}
               className="w-full sm:w-auto px-8 py-4 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full font-bold text-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-all transform hover:scale-105 shadow-2xl hover:shadow-indigo-500/20"
             >
               Start for Free
             </button>
-            <button 
+            <button
               onClick={onPricing}
               className="w-full sm:w-auto px-8 py-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-900 dark:text-white rounded-full font-bold text-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors shadow-lg"
             >
               See Pricing
             </button>
           </div>
-          
+
           <div className="flex items-center justify-center gap-6 mt-6 text-sm text-gray-500 dark:text-gray-400">
              <span>✓ No credit card required</span>
              <span>✓ 7-day free trial</span>
@@ -292,7 +373,7 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
       </section>
 
       {/* Stats Banner */}
-      <section className="py-10 bg-indigo-600 text-white">
+      <section className="py-10 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white">
          <div className="container mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
                <div className="text-4xl font-bold mb-1">10M+</div>
@@ -335,14 +416,14 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
                 <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Three simple steps to skyrocket your engagement.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 card-3d-container">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
                 {[
                     { step: '01', title: 'Choose Platform', desc: 'Select Instagram, TikTok, LinkedIn or others.', icon: '📱' },
                     { step: '02', title: 'Describe Topic', desc: 'Type a few words about your post or image.', icon: '⌨️' },
                     { step: '03', title: 'Copy & Paste', desc: 'Get AI-optimized tags instantly and post.', icon: '🚀' }
                 ].map((item, i) => (
-                    <div key={i} className="card-3d relative p-8 rounded-3xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:shadow-2xl transition-all duration-300 group">
-                        <div className="absolute -top-6 left-8 bg-indigo-600 text-white text-xl font-bold w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                    <div key={i} className="relative p-8 rounded-3xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:shadow-2xl transition-all duration-300 group">
+                        <div className="absolute -top-6 left-8 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xl font-bold w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                             {item.step}
                         </div>
                         <div className="mt-6 text-5xl mb-6 transform group-hover:scale-110 transition-transform duration-300">{item.icon}</div>
@@ -389,7 +470,7 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
                </div>
                <p className="text-gray-500 dark:text-gray-400 text-sm">AI-powered tools for the modern creator.</p>
             </div>
-            
+
             {[
                 { header: 'Product', links: ['Features', 'Pricing', 'API', 'Showcase'] },
                 { header: 'Company', links: ['About', 'Blog', 'Careers', 'Contact'] },
