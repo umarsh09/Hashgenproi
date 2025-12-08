@@ -9,12 +9,23 @@ interface GeneratorProps {
   onBack?: () => void;
 }
 
+const HASHTAG_CATEGORIES = [
+  { id: 'trending', name: 'Trending', icon: '🔥', desc: 'Hot & viral tags' },
+  { id: 'niche', name: 'Niche', icon: '🎯', desc: 'Targeted audience' },
+  { id: 'branded', name: 'Branded', icon: '💼', desc: 'Business & brand tags' },
+  { id: 'community', name: 'Community', icon: '👥', desc: 'Engagement focused' },
+  { id: 'location', name: 'Location', icon: '📍', desc: 'Geo-targeted tags' },
+  { id: 'mixed', name: 'Mixed', icon: '✨', desc: 'Best of all types' },
+];
+
 export const Generator: React.FC<GeneratorProps> = ({ onGenerate, onBack }) => {
   const [selectedPlatform, setSelectedPlatform] = useState<Platform>(Platform.INSTAGRAM);
   const [selectedLanguage, setSelectedLanguage] = useState('English');
+  const [selectedCategory, setSelectedCategory] = useState('mixed');
   const [keyword, setKeyword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<string[]>([]);
+  const [copied, setCopied] = useState(false);
   const { showToast } = useToast();
 
   const handleGenerate = async () => {
@@ -54,253 +65,280 @@ export const Generator: React.FC<GeneratorProps> = ({ onGenerate, onBack }) => {
 
   const copyAll = () => {
     if (results.length === 0) return;
-    copyToClipboard(results.join(' '));
+    navigator.clipboard.writeText(results.join(' '));
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+    showToast('All hashtags copied!', 'success');
   };
 
   return (
-    <div className="flex flex-col gap-8 animate-fade-in max-w-5xl mx-auto relative pb-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 -m-4 md:-m-6 lg:-m-8">
       {/* Header */}
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex-1">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-2xl shadow-lg shadow-indigo-500/30">
-              #
-            </div>
-            <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Hashtag Generator</h2>
-              <p className="text-gray-500 dark:text-gray-400 text-sm">AI-powered hashtags for maximum reach</p>
-            </div>
-          </div>
-        </div>
-        {onBack && (
-          <button
-            onClick={onBack}
-            className="p-2.5 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all"
-            title="Close"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        )}
-      </div>
-
-      {/* Platform Selector */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Select Platform</h3>
-          <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-900 px-3 py-1 rounded-full">
-            {PLATFORMS[selectedPlatform].maxTags} hashtags
-          </span>
-        </div>
-        <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
-          {Object.values(PLATFORMS).map((p) => (
-            <button
-              key={p.id}
-              onClick={() => setSelectedPlatform(p.id)}
-              title={`Generate for ${p.name}`}
-              className={`
-                relative p-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-2 group
-                ${selectedPlatform === p.id
-                  ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20 shadow-lg shadow-indigo-500/10'
-                  : 'border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-white dark:hover:bg-gray-800'}
-              `}
-            >
-              {selectedPlatform === p.id && (
-                <div className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center">
-                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-              )}
-              <div className="w-10 h-10 flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
-                <img src={p.iconUrl} alt={p.name} className="w-full h-full object-contain" />
-              </div>
-              <span className={`text-xs font-semibold ${selectedPlatform === p.id ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-600 dark:text-gray-400'}`}>
-                {p.name}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Input Section */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
-        {/* Loading Overlay */}
-        {isLoading && (
-          <div className="absolute inset-0 z-20 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center animate-fade-in">
-            <div className="relative w-20 h-20 mb-6">
-              <div className="absolute inset-0 rounded-full border-4 border-indigo-100 dark:border-indigo-900"></div>
-              <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-indigo-600 animate-spin"></div>
-              <div className="absolute inset-3 rounded-full border-4 border-transparent border-t-purple-500 animate-spin" style={{ animationDirection: 'reverse', animationDuration: '0.8s' }}></div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-2xl">🚀</span>
-              </div>
-            </div>
-            <p className="text-lg font-bold text-gray-800 dark:text-white">Generating Hashtags...</p>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Analyzing trends with AI</p>
-          </div>
-        )}
-
-        <div className="p-6">
-          {/* Language Selector */}
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-2">
-              <span className="text-lg">🌍</span>
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Output Language</span>
-            </div>
-            <select
-              value={selectedLanguage}
-              onChange={(e) => setSelectedLanguage(e.target.value)}
-              className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-sm rounded-xl px-4 py-2.5 text-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none cursor-pointer font-medium"
-            >
-              {LANGUAGES.map(lang => (
-                <option key={lang.name} value={lang.name}>{lang.flag} {lang.name}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Input Field */}
-          <div className="space-y-4">
-            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300">
-              Describe your content
-            </label>
-            <div className="relative">
-              <textarea
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleGenerate()}
-                placeholder="e.g., Summer vacation photos in Italy, visiting the Colosseum in Rome with family..."
-                disabled={isLoading}
-                rows={3}
-                className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-5 py-4 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-base disabled:opacity-50 resize-none"
-              />
-              <div className="absolute bottom-3 right-3 text-xs text-gray-400">
-                {keyword.length}/500
-              </div>
-            </div>
-
-            {/* Quick Suggestions */}
-            <div className="flex flex-wrap gap-2">
-              {['Travel', 'Food', 'Fashion', 'Fitness', 'Tech'].map((tag) => (
-                <button
-                  key={tag}
-                  onClick={() => setKeyword(tag.toLowerCase())}
-                  className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 text-xs font-medium rounded-lg transition-colors"
-                >
-                  {tag}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Generate Button */}
-        <div className="px-6 py-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-100 dark:border-gray-700">
-          <button
-            onClick={handleGenerate}
-            disabled={isLoading || !keyword.trim()}
-            className={`
-              w-full py-4 rounded-xl font-bold text-white transition-all transform flex items-center justify-center gap-3 shadow-lg
-              ${isLoading || !keyword.trim()
-                ? 'bg-gray-300 dark:bg-gray-700 cursor-not-allowed'
-                : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 hover:shadow-indigo-500/25 hover:-translate-y-0.5 active:scale-[0.98]'}
-            `}
-          >
-            {isLoading ? (
-              <>
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                <span>Generating...</span>
-              </>
-            ) : (
-              <>
-                <span className="text-xl">⚡</span>
-                <span>Generate Hashtags</span>
-              </>
-            )}
-          </button>
-        </div>
-      </div>
-
-      {/* Results Section */}
-      {results.length > 0 && (
-        <div className="animate-slide-up space-y-4">
-          {/* Results Header */}
+      <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 py-8 px-6">
+        <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center">
+                <span className="text-3xl font-bold text-white">#</span>
               </div>
               <div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Generated Successfully!</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{results.length} hashtags ready to use</p>
+                <h1 className="text-3xl font-bold text-white">Hashtag Generator</h1>
+                <p className="text-indigo-100">AI-powered hashtags for maximum reach</p>
               </div>
             </div>
-            <button
-              onClick={copyAll}
-              className="flex items-center gap-2 px-5 py-2.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-semibold rounded-xl hover:bg-gray-800 dark:hover:bg-gray-100 transition-all shadow-sm"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-              </svg>
-              Copy All
-            </button>
+            {onBack && (
+              <button
+                onClick={onBack}
+                className="p-2.5 bg-white/20 hover:bg-white/30 rounded-xl text-white transition-all"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
           </div>
+        </div>
+      </div>
 
-          {/* Results Card */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
-            <div className="p-6">
-              <div className="flex flex-wrap gap-2.5">
-                {results.map((tag, index) => (
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Left Panel - Options */}
+          <div className="lg:col-span-1 space-y-6">
+            {/* Platform Selection */}
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
+              <h3 className="font-semibold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
+                <span className="text-xl">📱</span> Select Platform
+              </h3>
+              <div className="grid grid-cols-2 gap-3">
+                {Object.values(PLATFORMS).map((p) => (
                   <button
-                    key={index}
-                    onClick={() => copyToClipboard(tag)}
-                    title="Click to copy"
-                    className="group px-4 py-2.5 rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 hover:from-indigo-50 hover:to-purple-50 dark:hover:from-indigo-900/30 dark:hover:to-purple-900/30 border border-gray-200 dark:border-gray-600 hover:border-indigo-300 dark:hover:border-indigo-500 text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 text-sm font-medium transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-md"
-                    style={{ animation: `fadeIn 0.3s ease-out ${index * 0.03}s backwards` }}
+                    key={p.id}
+                    onClick={() => setSelectedPlatform(p.id)}
+                    className={`p-3 rounded-xl flex flex-col items-center gap-2 transition-all ${
+                      selectedPlatform === p.id
+                        ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg scale-105'
+                        : 'bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'
+                    }`}
                   >
-                    <span className="flex items-center gap-2">
-                      {tag}
-                      <svg className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                      </svg>
-                    </span>
+                    <img src={p.iconUrl} alt={p.name} className="w-6 h-6" />
+                    <span className="text-xs font-medium">{p.name}</span>
+                    {selectedPlatform === p.id && <span className="text-xs">✓</span>}
+                  </button>
+                ))}
+              </div>
+              <div className="mt-4 p-3 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-indigo-700 dark:text-indigo-300">Max hashtags:</span>
+                  <span className="font-bold text-indigo-600 dark:text-indigo-400">{PLATFORMS[selectedPlatform].maxTags}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Category Selection */}
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
+              <h3 className="font-semibold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
+                <span className="text-xl">🏷️</span> Hashtag Type
+              </h3>
+              <div className="space-y-2">
+                {HASHTAG_CATEGORIES.map((cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => setSelectedCategory(cat.id)}
+                    className={`w-full p-3 rounded-xl flex items-center gap-3 transition-all ${
+                      selectedCategory === cat.id
+                        ? 'bg-indigo-500 text-white'
+                        : 'bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    <span className="text-lg">{cat.icon}</span>
+                    <div className="text-left">
+                      <div className="font-medium text-sm">{cat.name}</div>
+                      <div className={`text-xs ${selectedCategory === cat.id ? 'text-white/80' : 'text-gray-500 dark:text-gray-400'}`}>
+                        {cat.desc}
+                      </div>
+                    </div>
+                    {selectedCategory === cat.id && <span className="ml-auto">✓</span>}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Results Footer */}
-            <div className="px-6 py-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span>Click any hashtag to copy</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <img src={PLATFORMS[selectedPlatform].iconUrl} alt="" className="w-4 h-4" />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{PLATFORMS[selectedPlatform].name}</span>
-              </div>
+            {/* Language Selection */}
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
+              <h3 className="font-semibold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
+                <span className="text-xl">🌍</span> Output Language
+              </h3>
+              <select
+                value={selectedLanguage}
+                onChange={(e) => setSelectedLanguage(e.target.value)}
+                className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none"
+              >
+                {LANGUAGES.map(lang => (
+                  <option key={lang.name} value={lang.name}>{lang.flag} {lang.name}</option>
+                ))}
+              </select>
             </div>
           </div>
 
-          {/* Tips */}
-          <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl p-4 border border-indigo-100 dark:border-indigo-900/30">
-            <div className="flex items-start gap-3">
-              <span className="text-lg">💡</span>
-              <div>
-                <p className="text-sm font-medium text-indigo-900 dark:text-indigo-300">Pro Tip</p>
-                <p className="text-sm text-indigo-700 dark:text-indigo-400 mt-1">
-                  Mix popular and niche hashtags for best results. Use 20-30 hashtags on Instagram for maximum reach!
-                </p>
+          {/* Right Panel - Generator */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Input Section */}
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
+              <h3 className="font-semibold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
+                <span className="text-xl">✍️</span> Describe Your Content
+              </h3>
+              <textarea
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleGenerate()}
+                placeholder="e.g., Summer vacation photos in Italy, visiting the Colosseum in Rome with family, enjoying gelato..."
+                disabled={isLoading}
+                className="w-full h-32 p-4 rounded-xl border-2 resize-none transition-all focus:outline-none bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 focus:border-indigo-500"
+              />
+              <div className="flex justify-between items-center mt-2 text-sm text-gray-500 dark:text-gray-400">
+                <span>{keyword.length}/500 characters</span>
+                <span>Press Enter to generate</span>
+              </div>
+
+              {/* Quick Suggestions */}
+              <div className="mt-4">
+                <p className="text-sm mb-2 text-gray-500 dark:text-gray-400">Quick suggestions:</p>
+                <div className="flex flex-wrap gap-2">
+                  {['Travel', 'Food', 'Fashion', 'Fitness', 'Tech', 'Photography', 'Business', 'Lifestyle'].map(tag => (
+                    <button
+                      key={tag}
+                      onClick={() => setKeyword(tag.toLowerCase() + ' content')}
+                      className="px-3 py-1.5 rounded-full text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                onClick={handleGenerate}
+                disabled={isLoading || !keyword.trim()}
+                className={`mt-6 w-full py-4 rounded-xl font-semibold text-white transition-all flex items-center justify-center gap-2 ${
+                  isLoading || !keyword.trim()
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 shadow-lg hover:shadow-xl'
+                }`}
+              >
+                {isLoading ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    Generating Hashtags...
+                  </>
+                ) : (
+                  <>
+                    <span>⚡</span> Generate Hashtags
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Results Section */}
+            {results.length > 0 && (
+              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden animate-fade-in">
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-b border-green-100 dark:border-green-800">
+                  <h3 className="font-semibold flex items-center gap-2 text-green-700 dark:text-green-300">
+                    <span className="text-xl">✅</span> {results.length} Hashtags Generated!
+                  </h3>
+                  <button
+                    onClick={copyAll}
+                    className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all ${
+                      copied
+                        ? 'bg-green-500 text-white'
+                        : 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-800'
+                    }`}
+                  >
+                    {copied ? (
+                      <>
+                        <span>✓</span> Copied All!
+                      </>
+                    ) : (
+                      <>
+                        <span>📋</span> Copy All
+                      </>
+                    )}
+                  </button>
+                </div>
+                <div className="p-6">
+                  <div className="flex flex-wrap gap-2">
+                    {results.map((tag, index) => (
+                      <button
+                        key={index}
+                        onClick={() => copyToClipboard(tag)}
+                        className="px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 border border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 hover:from-indigo-100 hover:to-purple-100 dark:hover:from-indigo-900/50 dark:hover:to-purple-900/50 text-sm font-medium transition-all hover:scale-105"
+                        style={{ animation: `fadeIn 0.3s ease-out ${index * 0.02}s backwards` }}
+                      >
+                        {tag}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="px-6 py-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-100 dark:border-gray-700">
+                  <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                    <span>Click any hashtag to copy</span>
+                    <div className="flex items-center gap-2">
+                      <img src={PLATFORMS[selectedPlatform].iconUrl} alt="" className="w-4 h-4" />
+                      <span>{PLATFORMS[selectedPlatform].name}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Pro Tips */}
+            <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-2xl border border-indigo-100 dark:border-indigo-800 p-6">
+              <h3 className="font-semibold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
+                <span className="text-xl">💡</span> Pro Tips
+              </h3>
+              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                <li className="flex items-start gap-2">
+                  <span className="text-indigo-500">•</span>
+                  Mix popular (1M+) and niche (&lt;100K) hashtags for best reach
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-indigo-500">•</span>
+                  Use 20-30 hashtags on Instagram, 3-5 on Twitter for optimal engagement
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-indigo-500">•</span>
+                  Place hashtags in comments on Instagram to keep captions clean
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-indigo-500">•</span>
+                  Rotate your hashtag sets to avoid being flagged as spam
+                </li>
+              </ul>
+            </div>
+
+            {/* Stats Cards */}
+            <div className="grid grid-cols-3 gap-4">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 text-center">
+                <div className="text-2xl mb-1">📱</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">Platform</div>
+                <div className="font-semibold text-gray-900 dark:text-white">{PLATFORMS[selectedPlatform].name}</div>
+              </div>
+              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 text-center">
+                <div className="text-2xl mb-1">🏷️</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">Max Tags</div>
+                <div className="font-semibold text-gray-900 dark:text-white">{PLATFORMS[selectedPlatform].maxTags}</div>
+              </div>
+              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 text-center">
+                <div className="text-2xl mb-1">🌍</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">Language</div>
+                <div className="font-semibold text-gray-900 dark:text-white">{selectedLanguage}</div>
               </div>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };

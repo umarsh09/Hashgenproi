@@ -61,244 +61,213 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
     const recentActivity = history.slice(0, 5);
 
     return (
-      <div className="flex flex-col animate-fade-in space-y-8 pb-12">
-        {/* Welcome Banner */}
-        <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 rounded-3xl p-8 text-white">
-          {/* Background Pattern */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 left-0 w-40 h-40 bg-white rounded-full blur-3xl"></div>
-            <div className="absolute bottom-0 right-0 w-60 h-60 bg-white rounded-full blur-3xl"></div>
-          </div>
-
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 -m-4 md:-m-6 lg:-m-8">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 py-8 px-6">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="flex items-center gap-4">
                 <img
                   src={user?.avatar}
                   alt="Avatar"
-                  className="w-14 h-14 rounded-2xl border-2 border-white/30 shadow-lg"
+                  className="w-16 h-16 rounded-2xl border-2 border-white/30 shadow-lg"
                 />
                 <div>
                   <p className="text-indigo-100 text-sm">Welcome back,</p>
-                  <h1 className="text-2xl md:text-3xl font-bold">{user?.name}</h1>
+                  <h1 className="text-3xl font-bold text-white">{user?.name}</h1>
+                  <p className="text-indigo-100 text-sm mt-1">Ready to create viral content?</p>
                 </div>
               </div>
-              <p className="text-indigo-100 mt-2 max-w-md">
-                Ready to create viral content? Your AI-powered creative studio awaits.
-              </p>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <button
-                onClick={onStart}
-                className="px-6 py-3.5 bg-white text-indigo-600 font-bold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 flex items-center justify-center gap-2"
-              >
-                <span>⚡</span> Quick Generate
-              </button>
-              <button
-                onClick={() => onNavigate?.(View.HISTORY)}
-                className="px-6 py-3.5 bg-white/20 backdrop-blur-sm text-white font-semibold rounded-xl border border-white/30 hover:bg-white/30 transition-all flex items-center justify-center gap-2"
-              >
-                <span>📊</span> View History
-              </button>
+              <div className="flex flex-wrap gap-3">
+                <button
+                  onClick={onStart}
+                  className="px-6 py-3 bg-white text-indigo-600 font-bold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
+                >
+                  <span>⚡</span> Quick Generate
+                </button>
+                <button
+                  onClick={() => onNavigate?.(View.HISTORY)}
+                  className="px-6 py-3 bg-white/20 backdrop-blur text-white font-semibold rounded-xl border border-white/30 hover:bg-white/30 transition-all flex items-center gap-2"
+                >
+                  <span>📊</span> View History
+                </button>
+                <button
+                  onClick={onPricing}
+                  className="px-6 py-3 bg-yellow-400 text-yellow-900 font-bold rounded-xl shadow-lg hover:bg-yellow-300 transition-all flex items-center gap-2"
+                >
+                  <span>💎</span> Upgrade
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-lg transition-all group">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white text-xl shadow-lg shadow-blue-500/20">
-                📊
-              </div>
-              <span className="text-xs font-medium text-green-500 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">
-                +{todayGenerations} today
-              </span>
-            </div>
-            <h3 className="text-3xl font-bold text-gray-900 dark:text-white">{totalGenerations}</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Total Generated</p>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-lg transition-all">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center text-white text-xl shadow-lg shadow-yellow-500/20">
-                🪙
-              </div>
-              <span className={`text-xs font-medium px-2 py-1 rounded-full ${user?.plan === 'free' ? 'text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20' : 'text-green-500 bg-green-50 dark:bg-green-900/20'}`}>
-                {user?.plan === 'free' ? 'Free Plan' : 'Unlimited'}
-              </span>
-            </div>
-            <h3 className="text-3xl font-bold text-gray-900 dark:text-white">{creditsLeft}</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Credits Left</p>
-            {user?.plan === 'free' && (
-              <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full mt-3 overflow-hidden">
-                <div
-                  className="bg-gradient-to-r from-yellow-500 to-orange-500 h-full rounded-full transition-all"
-                  style={{ width: `${(Number(creditsLeft)/5)*100}%` }}
-                ></div>
-              </div>
-            )}
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-lg transition-all">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-xl shadow-lg shadow-purple-500/20">
-                💾
-              </div>
-            </div>
-            <h3 className="text-3xl font-bold text-gray-900 dark:text-white">{history.length}</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Saved Items</p>
-          </div>
-
-          <div
-            onClick={onPricing}
-            className="bg-gradient-to-br from-indigo-500 to-purple-600 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all cursor-pointer group relative overflow-hidden"
-          >
-            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            <div className="relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-xl">
-                  💎
+        <div className="max-w-6xl mx-auto px-6 py-8">
+          {/* Quick Stats */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-lg transition-all">
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white text-xl shadow-lg">
+                  📊
                 </div>
-                <svg className="w-5 h-5 text-white/70 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
+                <span className="text-xs font-medium text-green-500 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">
+                  +{todayGenerations} today
+                </span>
               </div>
-              <h3 className="text-3xl font-bold text-white capitalize">{user?.plan}</h3>
-              <p className="text-sm text-indigo-100 mt-1">Upgrade Plan →</p>
+              <h3 className="text-3xl font-bold text-gray-900 dark:text-white">{totalGenerations}</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Total Generated</p>
             </div>
-          </div>
-        </div>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Usage Chart */}
-          <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Weekly Activity</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Your content generation trends</p>
-              </div>
-              <select className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-sm rounded-xl px-4 py-2 text-gray-600 dark:text-gray-300 outline-none focus:ring-2 focus:ring-indigo-500">
-                <option>Last 7 Days</option>
-                <option>Last 30 Days</option>
-              </select>
-            </div>
-            <div className="p-6">
-              <div className="h-64 w-full flex items-end justify-between gap-3">
-                {[35, 55, 40, 70, 45, 90, 65].map((h, i) => (
-                  <div key={i} className="flex flex-col items-center gap-3 flex-1 group cursor-pointer">
-                    <div className="relative w-full rounded-xl bg-gray-100 dark:bg-gray-900 h-full flex items-end overflow-hidden">
-                      <div
-                        className="w-full bg-gradient-to-t from-indigo-600 to-purple-500 rounded-xl transition-all duration-500 group-hover:from-indigo-500 group-hover:to-purple-400 relative"
-                        style={{ height: `${h}%` }}
-                      >
-                        <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs font-bold py-1.5 px-3 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
-                          {h}
-                        </div>
-                      </div>
-                    </div>
-                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400">{['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i]}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Recent Activity */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-gray-100 dark:border-gray-700">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white">Recent Activity</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Your latest generations</p>
-            </div>
-            <div className="p-4">
-              {recentActivity.length > 0 ? (
-                <div className="space-y-3">
-                  {recentActivity.map((item, i) => (
-                    <div key={i} className="flex gap-4 items-center p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors group cursor-pointer">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm flex-shrink-0 ${
-                        item.type === 'bio' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400' :
-                        item.type === 'hashtag' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' :
-                        'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400'
-                      }`}>
-                        {item.type === 'bio' ? '✍️' : (item.type === 'hashtag' ? '#' : '✨')}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{item.keyword}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 capitalize">
-                          {item.type} • {new Date(item.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                        </p>
-                      </div>
-                      <svg className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </div>
-                  ))}
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-lg transition-all">
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center text-white text-xl shadow-lg">
+                  🪙
                 </div>
-              ) : (
-                <div className="text-center py-8">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-2xl">
-                    📭
-                  </div>
-                  <p className="text-gray-500 dark:text-gray-400 text-sm">No activity yet</p>
-                  <p className="text-gray-400 dark:text-gray-500 text-xs mt-1">Start generating to see history</p>
+                <span className={`text-xs font-medium px-2 py-1 rounded-full ${user?.plan === 'free' ? 'text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20' : 'text-green-500 bg-green-50 dark:bg-green-900/20'}`}>
+                  {user?.plan === 'free' ? 'Free Plan' : 'Unlimited'}
+                </span>
+              </div>
+              <h3 className="text-3xl font-bold text-gray-900 dark:text-white">{creditsLeft}</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Credits Left</p>
+              {user?.plan === 'free' && (
+                <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full mt-3 overflow-hidden">
+                  <div className="bg-gradient-to-r from-yellow-500 to-orange-500 h-full rounded-full" style={{ width: `${(Number(creditsLeft)/5)*100}%` }}></div>
                 </div>
               )}
             </div>
-            {recentActivity.length > 0 && (
-              <div className="px-4 pb-4">
-                <button
-                  onClick={() => onNavigate?.(View.HISTORY)}
-                  className="w-full py-3 text-sm text-center text-indigo-600 dark:text-indigo-400 font-semibold hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-xl transition-colors"
-                >
-                  View Full History →
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
 
-        {/* Creative Studio - Tools Grid */}
-        <div>
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Creative Studio</h2>
-              <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">AI-powered tools for content creation</p>
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-lg transition-all">
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-xl shadow-lg">
+                  💾
+                </div>
+              </div>
+              <h3 className="text-3xl font-bold text-gray-900 dark:text-white">{history.length}</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Saved Items</p>
             </div>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-            {dashboardFeatures.map((feature, idx) => (
-              <div
-                key={idx}
-                onClick={() => onNavigate?.(feature.view)}
-                className="group p-5 rounded-2xl border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-indigo-500/50 dark:hover:border-indigo-500/50 cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <div className={`w-12 h-12 rounded-xl ${feature.bgColor} flex items-center justify-center text-2xl group-hover:scale-110 transition-transform`}>
-                    {feature.icon}
-                  </div>
-                  <svg className="w-5 h-5 text-gray-300 dark:text-gray-600 group-hover:text-indigo-500 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+            <div onClick={onPricing} className="bg-gradient-to-br from-indigo-500 to-purple-600 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all cursor-pointer group overflow-hidden relative">
+              <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-white text-xl">💎</div>
+                  <svg className="w-5 h-5 text-white/70 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </div>
-                <h3 className="text-base font-bold text-gray-900 dark:text-white mb-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{feature.title}</h3>
-                <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{feature.desc}</p>
+                <h3 className="text-3xl font-bold text-white capitalize">{user?.plan}</h3>
+                <p className="text-sm text-indigo-100">Upgrade Plan →</p>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Quick Tips */}
-        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-2xl p-6 border border-indigo-100 dark:border-indigo-900/30">
-          <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-xl flex-shrink-0">
-              💡
             </div>
-            <div>
-              <h3 className="font-bold text-gray-900 dark:text-white mb-1">Pro Tip</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Use specific keywords and descriptions for better AI-generated content. The more context you provide, the more relevant your hashtags and captions will be!
-              </p>
+          </div>
+
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Left Panel - Recent Activity & Chart */}
+            <div className="lg:col-span-1 space-y-6">
+              {/* Recent Activity */}
+              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <div className="p-4 border-b border-gray-100 dark:border-gray-700">
+                  <h3 className="font-semibold flex items-center gap-2 text-gray-900 dark:text-white">
+                    <span className="text-xl">🕐</span> Recent Activity
+                  </h3>
+                </div>
+                <div className="p-4">
+                  {recentActivity.length > 0 ? (
+                    <div className="space-y-3">
+                      {recentActivity.map((item, i) => (
+                        <div key={i} className="flex gap-3 items-center p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer">
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm ${
+                            item.type === 'bio' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600' :
+                            item.type === 'hashtag' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600' :
+                            'bg-green-100 dark:bg-green-900/30 text-green-600'
+                          }`}>
+                            {item.type === 'bio' ? '✍️' : (item.type === 'hashtag' ? '#' : '✨')}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{item.keyword}</p>
+                            <p className="text-xs text-gray-500 capitalize">{item.type}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <div className="text-4xl mb-2">📭</div>
+                      <p className="text-sm text-gray-500">No activity yet</p>
+                    </div>
+                  )}
+                </div>
+                {recentActivity.length > 0 && (
+                  <div className="px-4 pb-4">
+                    <button onClick={() => onNavigate?.(View.HISTORY)} className="w-full py-3 text-sm text-center text-indigo-600 font-semibold hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-xl transition-colors">
+                      View Full History →
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Weekly Chart */}
+              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
+                <h3 className="font-semibold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
+                  <span className="text-xl">📈</span> Weekly Activity
+                </h3>
+                <div className="h-40 w-full flex items-end justify-between gap-2">
+                  {[35, 55, 40, 70, 45, 90, 65].map((h, i) => (
+                    <div key={i} className="flex flex-col items-center gap-2 flex-1">
+                      <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-lg h-32 flex items-end overflow-hidden">
+                        <div className="w-full bg-gradient-to-t from-indigo-600 to-purple-500 rounded-lg transition-all" style={{ height: `${h}%` }}></div>
+                      </div>
+                      <span className="text-xs text-gray-500">{['M', 'T', 'W', 'T', 'F', 'S', 'S'][i]}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Pro Tips */}
+              <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-2xl border border-indigo-100 dark:border-indigo-800 p-6">
+                <h3 className="font-semibold mb-3 flex items-center gap-2 text-gray-900 dark:text-white">
+                  <span className="text-xl">💡</span> Pro Tips
+                </h3>
+                <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                  <li className="flex items-start gap-2">
+                    <span className="text-indigo-500">•</span>
+                    Be specific with descriptions for better results
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-indigo-500">•</span>
+                    Use trending topics for higher engagement
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-indigo-500">•</span>
+                    Mix popular and niche hashtags
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Right Panel - Tools Grid */}
+            <div className="lg:col-span-2">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                  <span>🎨</span> Creative Studio
+                </h2>
+                <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">AI-powered tools for content creation</p>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {dashboardFeatures.map((feature, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() => onNavigate?.(feature.view)}
+                    className="group p-5 rounded-2xl border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-indigo-500/50 cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1"
+                  >
+                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${feature.color} flex items-center justify-center text-2xl text-white mb-4 group-hover:scale-110 transition-transform shadow-lg`}>
+                      {feature.icon}
+                    </div>
+                    <h3 className="text-base font-bold text-gray-900 dark:text-white mb-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{feature.title}</h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{feature.desc}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
