@@ -14,6 +14,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, onL
     { id: View.HOME, label: 'Dashboard', icon: '📊' },
     { id: View.GENERATOR_HASHTAG, label: 'Hashtag Generator', icon: '⚡' },
     { id: View.GENERATOR_BIO, label: 'Bio Writer', icon: '✍️' },
+    { id: View.GENERATOR_SPORTS, label: 'Sports Content', icon: '🏆' },
     { id: View.HISTORY, label: 'History', icon: '📜' },
     { id: View.PRICING, label: 'Upgrade Plan', icon: '💎' },
     { id: View.SETTINGS, label: 'Settings', icon: '⚙️' },

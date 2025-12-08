@@ -25,6 +25,7 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
     { title: 'Scheduler', icon: '📅', desc: 'Plan your posts ahead.', view: View.GENERATOR_SCHEDULE, color: 'from-teal-500 to-cyan-500', bgColor: 'bg-teal-50 dark:bg-teal-900/20' },
     { title: 'Trend Watch', icon: '🔥', desc: 'Real-time viral topics.', view: View.GENERATOR_TREND, color: 'from-rose-500 to-red-500', bgColor: 'bg-rose-50 dark:bg-rose-900/20' },
     { title: 'Email Writer', icon: '📧', desc: 'Draft outreach emails.', view: View.GENERATOR_EMAIL, color: 'from-cyan-500 to-blue-500', bgColor: 'bg-cyan-50 dark:bg-cyan-900/20' },
+    { title: 'Sports Content', icon: '🏆', desc: 'Sports hashtags & predictions.', view: View.GENERATOR_SPORTS, color: 'from-green-500 to-emerald-500', bgColor: 'bg-green-50 dark:bg-green-900/20' },
   ];
 
   const faqs = [

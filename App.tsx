@@ -11,6 +11,7 @@ import { Auth } from './components/Auth';
 import { Pricing } from './components/Pricing';
 import { Settings } from './components/Settings';
 import { CustomToastProvider } from './components/CustomToast';
+import SportsGenerator from './components/SportsGenerator';
 import { View, GenerationResult, UserProfile } from './types';
 
 // Simple password hashing using Web Crypto API (browser-safe)
@@ -338,7 +339,18 @@ const AppContainer: React.FC = () => {
         return <Analyzer type="competitor" onGenerate={addToHistory} onBack={backToDashboard} />;
       case View.ANALYZER_AUDIT:
         return <Analyzer type="audit" onGenerate={addToHistory} onBack={backToDashboard} />;
-        
+      case View.GENERATOR_SPORTS:
+        return <SportsGenerator isDarkMode={isDarkMode} onGenerate={async (prompt: string) => {
+          // Use the AI to generate sports content
+          const { GoogleGenAI } = await import('@google/genai');
+          const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
+          const response = await ai.models.generateContent({
+            model: 'gemini-2.0-flash',
+            contents: prompt,
+          });
+          return response.text || '';
+        }} />;
+
       default:
         return <Home user={user} history={history} onStart={() => setCurrentView(View.AUTH)} onPricing={() => setCurrentView(View.PRICING)} isDashboard={isAppMode} onNavigate={setCurrentView} />;
     }
