@@ -1,23 +1,16 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Platform } from '../types';
 
-// Use Vite's native environment variable handling
-const getApiKey = (): string => {
-  // Vite exposes env vars with VITE_ prefix via import.meta.env
-  const apiKey = (import.meta as any).env?.VITE_GEMINI_API_KEY || '';
-  return apiKey;
-};
-
 const getAiClient = () => {
-  const apiKey = getApiKey();
+  const apiKey = process.env.API_KEY || ''; // Fail safe for undefined env
+  // We do NOT throw here instantly to allow App to load even if key is missing
   return new GoogleGenAI({ apiKey });
 };
 
 // Helper to check key before call
 const checkApiKey = () => {
-  const apiKey = getApiKey();
-  if (!apiKey) {
-    throw new Error("API Key is missing. Please set VITE_GEMINI_API_KEY in your .env.local file.");
+  if (!process.env.API_KEY) {
+    throw new Error("API Key is missing. Please set REACT_APP_API_KEY or VITE_API_KEY.");
   }
 }
 
