@@ -12,6 +12,7 @@ import { Pricing } from './components/Pricing';
 import { Settings } from './components/Settings';
 import { CustomToastProvider } from './components/CustomToast';
 import SportsGenerator from './components/SportsGenerator';
+import { Help } from './components/Help';
 import { View, GenerationResult, UserProfile } from './types';
 
 // Simple password hashing using Web Crypto API (browser-safe)
@@ -350,6 +351,9 @@ const AppContainer: React.FC = () => {
           });
           return response.text || '';
         }} />;
+
+      case View.HELP:
+        return <Help onBack={backToDashboard} />;
 
       default:
         return <Home user={user} history={history} onStart={() => setCurrentView(View.AUTH)} onPricing={() => setCurrentView(View.PRICING)} isDashboard={isAppMode} onNavigate={setCurrentView} />;

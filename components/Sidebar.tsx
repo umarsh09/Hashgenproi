@@ -18,6 +18,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, onL
     { id: View.HISTORY, label: 'History', icon: '📜' },
     { id: View.PRICING, label: 'Upgrade Plan', icon: '💎' },
     { id: View.SETTINGS, label: 'Settings', icon: '⚙️' },
+    { id: View.HELP, label: 'Help Center', icon: '❓' },
   ];
 
   return (

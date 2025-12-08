@@ -253,18 +253,20 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
                 </h2>
                 <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">AI-powered tools for content creation</p>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 {dashboardFeatures.map((feature, idx) => (
                   <div
                     key={idx}
                     onClick={() => onNavigate?.(feature.view)}
-                    className="group p-5 rounded-2xl border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-indigo-500/50 cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1"
+                    className="group p-4 rounded-xl border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-indigo-500/50 cursor-pointer transition-all hover:shadow-lg hover:-translate-y-0.5 flex items-center gap-3"
                   >
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${feature.color} flex items-center justify-center text-2xl text-white mb-4 group-hover:scale-110 transition-transform shadow-lg`}>
+                    <div className={`w-10 h-10 rounded-lg bg-gradient-to-r ${feature.color} flex items-center justify-center text-xl text-white group-hover:scale-110 transition-transform shadow-md flex-shrink-0`}>
                       {feature.icon}
                     </div>
-                    <h3 className="text-base font-bold text-gray-900 dark:text-white mb-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{feature.title}</h3>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">{feature.desc}</p>
+                    <div className="min-w-0">
+                      <h3 className="text-sm font-bold text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors truncate">{feature.title}</h3>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{feature.desc}</p>
+                    </div>
                   </div>
                 ))}
               </div>
