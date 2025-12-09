@@ -278,9 +278,9 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
             </button>
           </div>
           
-          <div className="flex items-center justify-center gap-6 mt-6 text-sm text-gray-500 dark:text-gray-400">
-             <span>✓ No credit card required</span>
-             <span>✓ 7-day free trial</span>
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mt-6 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+             <span>✓ No credit card</span>
+             <span>✓ Free trial</span>
              <span>✓ Cancel anytime</span>
           </div>
         </div>
@@ -380,7 +380,7 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
             <div className="col-span-1 md:col-span-1">
                <div className="flex items-center gap-2 mb-4">
                   <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold">#</div>
-                  <span className="text-xl font-bold text-gray-900 dark:text-white">HashtagGenius</span>
+                  <span className="text-xl font-bold text-gray-900 dark:text-white">HashGenPro</span>
                </div>
                <p className="text-gray-500 dark:text-gray-400 text-sm">AI-powered tools for the modern creator.</p>
             </div>
@@ -401,7 +401,7 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
             ))}
           </div>
           <div className="pt-8 border-t border-gray-100 dark:border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4">
-             <p className="text-gray-400 text-sm">© 2024 HashtagGenius AI. All rights reserved.</p>
+             <p className="text-gray-400 text-sm">© 2024 HashGenPro AI. All rights reserved.</p>
              <div className="flex gap-4">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/X_icon_2.svg" className="w-6 h-6 opacity-60 hover:opacity-100 cursor-pointer" alt="X" />
                 <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" className="w-6 h-6 opacity-60 hover:opacity-100 cursor-pointer" alt="Instagram" />
