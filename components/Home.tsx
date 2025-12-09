@@ -79,60 +79,60 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
         </div>
 
         {/* Analytics Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 card-3d-container">
-            <div className="card-3d bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl flex flex-col justify-between">
-                <div className="flex items-center justify-between mb-4">
-                    <span className="text-gray-500 dark:text-gray-400 font-medium text-sm">Total Generated</span>
-                    <span className="p-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg">📊</span>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 card-3d-container">
+            <div className="card-3d bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl flex flex-col justify-between min-h-[140px] sm:min-h-[160px]">
+                <div className="flex items-start gap-3">
+                    <span className="p-2.5 sm:p-3 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl text-xl sm:text-2xl flex-shrink-0">📊</span>
+                    <div className="flex-1 min-w-0">
+                        <p className="text-xs sm:text-sm text-green-500 font-medium">+{history.filter(h => new Date(h.timestamp) > new Date(Date.now() - 86400000)).length} today</p>
+                    </div>
                 </div>
-                <div>
-                    <h3 className="text-3xl font-bold text-gray-900 dark:text-white">{totalGenerations}</h3>
-                    <p className="text-xs text-green-500 mt-1 flex items-center">
-                       <span className="mr-1">▲</span> +{history.filter(h => new Date(h.timestamp) > new Date(Date.now() - 86400000)).length} today
-                    </p>
+                <div className="mt-3">
+                    <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">{totalGenerations}</h3>
+                    <span className="text-gray-500 dark:text-gray-400 font-medium text-xs sm:text-sm">Total Generated</span>
                 </div>
             </div>
 
-            <div className="card-3d bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl flex flex-col justify-between">
-                <div className="flex items-center justify-between mb-4">
-                    <span className="text-gray-500 dark:text-gray-400 font-medium text-sm">Daily Credits</span>
-                    <span className="p-2 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 rounded-lg">🪙</span>
+            <div className="card-3d bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl flex flex-col justify-between min-h-[140px] sm:min-h-[160px]">
+                <div className="flex items-start gap-3">
+                    <span className="p-2.5 sm:p-3 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 rounded-xl text-xl sm:text-2xl flex-shrink-0">🪙</span>
+                    <div className="flex-1 min-w-0">
+                        <p className="text-xs sm:text-sm text-yellow-600 dark:text-yellow-400 font-medium">{user?.plan === 'free' ? 'Free Plan' : 'Premium'}</p>
+                    </div>
                 </div>
-                <div>
-                    <h3 className="text-3xl font-bold text-gray-900 dark:text-white">{creditsLeft}</h3>
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 h-1.5 rounded-full mt-2 overflow-hidden">
-                        <div className="bg-yellow-500 h-full rounded-full" style={{ width: user?.plan === 'free' ? `${(Number(creditsLeft)/5)*100}%` : '100%' }}></div>
+                <div className="mt-3">
+                    <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">{creditsLeft}</h3>
+                    <span className="text-gray-500 dark:text-gray-400 font-medium text-xs sm:text-sm">Credits Left</span>
+                    <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full mt-2 overflow-hidden">
+                        <div className="bg-gradient-to-r from-yellow-400 to-orange-500 h-full rounded-full" style={{ width: user?.plan === 'free' ? `${(Number(creditsLeft)/5)*100}%` : '100%' }}></div>
                     </div>
                 </div>
             </div>
 
-             <div className="card-3d bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl flex flex-col justify-between">
-                <div className="flex items-center justify-between mb-4">
-                    <span className="text-gray-500 dark:text-gray-400 font-medium text-sm">Saved Items</span>
-                    <span className="p-2 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-lg">💾</span>
+            <div className="card-3d bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl flex flex-col justify-between min-h-[140px] sm:min-h-[160px]">
+                <div className="flex items-start gap-3">
+                    <span className="p-2.5 sm:p-3 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-xl text-xl sm:text-2xl flex-shrink-0">💾</span>
+                    <div className="flex-1 min-w-0">
+                        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 font-medium">In history</p>
+                    </div>
                 </div>
-                <div>
-                    <h3 className="text-3xl font-bold text-gray-900 dark:text-white">{history.length}</h3>
-                    <p className="text-xs text-gray-500 mt-1">
-                       In history
-                    </p>
+                <div className="mt-3">
+                    <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">{history.length}</h3>
+                    <span className="text-gray-500 dark:text-gray-400 font-medium text-xs sm:text-sm">Saved Items</span>
                 </div>
             </div>
 
-            <div className="card-3d bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl flex flex-col justify-between relative overflow-hidden group cursor-pointer" onClick={onPricing}>
-                 <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                 <div className="relative z-10">
-                    <div className="flex items-center justify-between mb-4">
-                        <span className="text-gray-500 dark:text-gray-400 font-medium group-hover:text-indigo-100 text-sm">Plan Status</span>
-                        <span className="p-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg group-hover:bg-white/20 group-hover:text-white">💎</span>
+            <div className="card-3d bg-gradient-to-br from-indigo-500 to-purple-600 p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-indigo-400/30 shadow-sm hover:shadow-xl flex flex-col justify-between min-h-[140px] sm:min-h-[160px] cursor-pointer group" onClick={onPricing}>
+                <div className="flex items-start gap-3">
+                    <span className="p-2.5 sm:p-3 bg-white/20 text-white rounded-xl text-xl sm:text-2xl flex-shrink-0">💎</span>
+                    <div className="flex-1 min-w-0">
+                        <p className="text-xs sm:text-sm text-indigo-100 font-medium flex items-center gap-1">Upgrade <span className="group-hover:translate-x-1 transition-transform">→</span></p>
                     </div>
-                    <div>
-                        <h3 className="text-3xl font-bold text-gray-900 dark:text-white group-hover:text-white capitalize">{user?.plan}</h3>
-                        <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-1 group-hover:text-indigo-100">
-                           Upgrade now →
-                        </p>
-                    </div>
-                 </div>
+                </div>
+                <div className="mt-3">
+                    <h3 className="text-2xl sm:text-3xl font-bold text-white capitalize">{user?.plan}</h3>
+                    <span className="text-indigo-100 font-medium text-xs sm:text-sm">Current Plan</span>
+                </div>
             </div>
         </div>
 
@@ -199,23 +199,22 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
                 <span>🛠️</span> Creative Studio
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 card-3d-container">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 card-3d-container">
                 {dashboardFeatures.map((feature, idx) => (
-                <div 
+                <div
                     key={idx}
                     onClick={() => onNavigate?.(feature.view)}
-                    className="card-3d group p-5 rounded-2xl border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-indigo-500/50 cursor-pointer"
+                    className="card-3d group p-3 sm:p-4 rounded-xl sm:rounded-2xl border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-indigo-500/50 cursor-pointer min-h-[120px] sm:min-h-[140px]"
                 >
-                    <div className="flex items-center justify-between mb-3">
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl ${feature.color}`}>
+                    <div className="flex items-center gap-3 mb-2 sm:mb-3">
+                        <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center text-xl sm:text-2xl flex-shrink-0 ${feature.color}`}>
                             {feature.icon}
                         </div>
-                        <div className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400">
-                            →
+                        <div className="flex-1 min-w-0">
+                            <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white group-hover:text-indigo-500 transition-colors leading-tight">{feature.title}</h3>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 leading-snug mt-0.5 line-clamp-2">{feature.desc}</p>
                         </div>
                     </div>
-                    <h3 className="text-base font-bold text-gray-900 dark:text-white mb-1 group-hover:text-indigo-500 transition-colors">{feature.title}</h3>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{feature.desc}</p>
                 </div>
                 ))}
             </div>
