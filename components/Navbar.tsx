@@ -24,12 +24,12 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   // Common Logo Component
   const Logo = () => (
-    <div className="flex items-center gap-3 cursor-pointer group" onClick={() => onViewChange(View.HOME)}>
-      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-500/20 group-hover:shadow-indigo-500/40 transition-all duration-300 transform group-hover:scale-105">
+    <div className="flex items-center gap-2 sm:gap-3 cursor-pointer group" onClick={() => onViewChange(View.HOME)}>
+      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold text-lg sm:text-xl shadow-lg shadow-indigo-500/20 group-hover:shadow-indigo-500/40 transition-all duration-300 transform group-hover:scale-105 flex-shrink-0">
         #
       </div>
-      <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 group-hover:to-gray-800 dark:group-hover:to-white transition-all">
-        HashtagGenius
+      <span className="text-lg sm:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 group-hover:to-gray-800 dark:group-hover:to-white transition-all truncate">
+        HashGenPro
       </span>
     </div>
   );

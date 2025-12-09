@@ -99,21 +99,21 @@ export const BioGenerator: React.FC<BioGeneratorProps> = ({ onGenerate, onBack }
                     <span className="text-lg">📱</span> Select Platform
                 </label>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 sm:grid-cols-3 gap-2">
               {Object.values(PLATFORMS).map((p) => (
                 <button
                   key={p.id}
                   onClick={() => setSelectedPlatform(p.id)}
                   title={p.name}
                   className={`
-                    flex items-center justify-center gap-2 px-3 py-3 rounded-lg text-sm font-medium border transition-all
-                    ${selectedPlatform === p.id 
-                      ? 'bg-indigo-600 border-indigo-600 text-white shadow-md transform scale-105' 
+                    flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 px-2 py-2.5 sm:px-3 sm:py-3 rounded-lg text-xs sm:text-sm font-medium border transition-all
+                    ${selectedPlatform === p.id
+                      ? 'bg-indigo-600 border-indigo-600 text-white shadow-md'
                       : 'bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-white dark:hover:bg-gray-800'}
                   `}
                 >
                   <img src={p.iconUrl} alt="" className="w-5 h-5 object-contain" />
-                  {p.name}
+                  <span className="truncate">{p.name}</span>
                 </button>
               ))}
             </div>

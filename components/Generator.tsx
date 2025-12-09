@@ -96,26 +96,26 @@ export const Generator: React.FC<GeneratorProps> = ({ onGenerate, onBack }) => {
       </div>
 
       {/* Platform Selector */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+      <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-6 gap-2 sm:gap-3">
         {Object.values(PLATFORMS).map((p) => (
           <button
             key={p.id}
             onClick={() => setSelectedPlatform(p.id)}
             title={`Generate for ${p.name}`}
             className={`
-              relative p-4 rounded-xl border transition-all duration-300 flex flex-col items-center gap-3 group
-              ${selectedPlatform === p.id 
-                ? 'border-indigo-500 bg-white dark:bg-gray-800 shadow-xl shadow-indigo-500/10 scale-105 ring-1 ring-indigo-500' 
+              relative p-3 sm:p-4 rounded-xl border transition-all duration-300 flex flex-col items-center gap-2 group
+              ${selectedPlatform === p.id
+                ? 'border-indigo-500 bg-white dark:bg-gray-800 shadow-lg shadow-indigo-500/10 ring-1 ring-indigo-500'
                 : 'border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-gray-900/50 hover:bg-white dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-700'}
             `}
           >
             {selectedPlatform === p.id && (
               <div className={`absolute inset-0 rounded-xl bg-gradient-to-br ${p.color} opacity-5 dark:opacity-10 -z-10`} />
             )}
-            <div className="w-10 h-10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 filter drop-shadow-sm">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                 <img src={p.iconUrl} alt={p.name} className="w-full h-full object-contain" />
             </div>
-            <span className={`text-xs font-bold uppercase tracking-wide ${selectedPlatform === p.id ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
+            <span className={`text-[10px] sm:text-xs font-bold uppercase tracking-wide truncate max-w-full ${selectedPlatform === p.id ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
               {p.name}
             </span>
           </button>

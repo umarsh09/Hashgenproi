@@ -14,17 +14,17 @@ interface HomeProps {
 export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = [], isDashboard = false, onNavigate }) => {
   // Features Linked to Views
   const dashboardFeatures = [
-    { title: 'Hashtag Generator', icon: '⚡', desc: 'Viral tags for any platform.', view: View.GENERATOR_HASHTAG, color: 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' },
-    { title: 'Bio Writer', icon: '✍️', desc: 'Craft the perfect profile bio.', view: View.GENERATOR_BIO, color: 'bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400' },
-    { title: 'Caption AI', icon: '📝', desc: 'Write engaging post captions.', view: View.GENERATOR_CAPTION, color: 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' },
-    { title: 'Reels Script', icon: '🎬', desc: 'Video scripts that hook viewers.', view: View.GENERATOR_SCRIPT, color: 'bg-pink-50 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400' },
-    { title: 'Story Ideas', icon: '💡', desc: 'Never run out of content ideas.', view: View.GENERATOR_IDEA, color: 'bg-yellow-50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400' },
-    { title: 'Competitor Spy', icon: '🕵️', desc: 'Analyze top performing profiles.', view: View.ANALYZER_COMPETITOR, color: 'bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400' },
-    { title: 'Profile Audit', icon: '🔍', desc: 'Get a score on your profile.', view: View.ANALYZER_AUDIT, color: 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400' },
-    { title: 'Emoji Maker', icon: '🎨', desc: 'Custom emoji combinations.', view: View.GENERATOR_EMOJI, color: 'bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400' },
-    { title: 'Scheduler', icon: '📅', desc: 'Plan your posts ahead.', view: View.GENERATOR_SCHEDULE, color: 'bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400' },
-    { title: 'Trend Watch', icon: '🔥', desc: 'Real-time viral topics.', view: View.GENERATOR_TREND, color: 'bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400' },
-    { title: 'Email Writer', icon: '📧', desc: 'Draft outreach emails.', view: View.GENERATOR_EMAIL, color: 'bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400' },
+    { title: 'Hashtags', icon: '⚡', desc: 'Viral tags', view: View.GENERATOR_HASHTAG, color: 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' },
+    { title: 'Bio Writer', icon: '✍️', desc: 'Perfect bios', view: View.GENERATOR_BIO, color: 'bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400' },
+    { title: 'Captions', icon: '📝', desc: 'Engaging posts', view: View.GENERATOR_CAPTION, color: 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' },
+    { title: 'Reels Script', icon: '🎬', desc: 'Video hooks', view: View.GENERATOR_SCRIPT, color: 'bg-pink-50 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400' },
+    { title: 'Story Ideas', icon: '💡', desc: 'Content ideas', view: View.GENERATOR_IDEA, color: 'bg-yellow-50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400' },
+    { title: 'Competitor', icon: '🕵️', desc: 'Spy profiles', view: View.ANALYZER_COMPETITOR, color: 'bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400' },
+    { title: 'Audit', icon: '🔍', desc: 'Profile score', view: View.ANALYZER_AUDIT, color: 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400' },
+    { title: 'Emoji', icon: '🎨', desc: 'Custom combos', view: View.GENERATOR_EMOJI, color: 'bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400' },
+    { title: 'Scheduler', icon: '📅', desc: 'Plan posts', view: View.GENERATOR_SCHEDULE, color: 'bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400' },
+    { title: 'Trends', icon: '🔥', desc: 'Viral topics', view: View.GENERATOR_TREND, color: 'bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400' },
+    { title: 'Email', icon: '📧', desc: 'Outreach', view: View.GENERATOR_EMAIL, color: 'bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400' },
   ];
 
   const faqs = [
@@ -199,22 +199,18 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
                 <span>🛠️</span> Creative Studio
             </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 card-3d-container">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 card-3d-container">
                 {dashboardFeatures.map((feature, idx) => (
                 <div
                     key={idx}
                     onClick={() => onNavigate?.(feature.view)}
-                    className="card-3d group p-3 sm:p-4 rounded-xl sm:rounded-2xl border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-indigo-500/50 cursor-pointer min-h-[120px] sm:min-h-[140px]"
+                    className="card-3d group p-4 rounded-xl border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-indigo-500/50 cursor-pointer flex flex-col items-center text-center"
                 >
-                    <div className="flex items-center gap-3 mb-2 sm:mb-3">
-                        <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center text-xl sm:text-2xl flex-shrink-0 ${feature.color}`}>
-                            {feature.icon}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white group-hover:text-indigo-500 transition-colors leading-tight">{feature.title}</h3>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 leading-snug mt-0.5 line-clamp-2">{feature.desc}</p>
-                        </div>
+                    <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center text-2xl sm:text-3xl mb-3 ${feature.color}`}>
+                        {feature.icon}
                     </div>
+                    <h3 className="text-sm font-bold text-gray-900 dark:text-white group-hover:text-indigo-500 transition-colors">{feature.title}</h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{feature.desc}</p>
                 </div>
                 ))}
             </div>
@@ -282,9 +278,9 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
             </button>
           </div>
           
-          <div className="flex items-center justify-center gap-6 mt-6 text-sm text-gray-500 dark:text-gray-400">
-             <span>✓ No credit card required</span>
-             <span>✓ 7-day free trial</span>
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mt-6 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+             <span>✓ No credit card</span>
+             <span>✓ Free trial</span>
              <span>✓ Cancel anytime</span>
           </div>
         </div>
@@ -384,7 +380,7 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
             <div className="col-span-1 md:col-span-1">
                <div className="flex items-center gap-2 mb-4">
                   <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold">#</div>
-                  <span className="text-xl font-bold text-gray-900 dark:text-white">HashtagGenius</span>
+                  <span className="text-xl font-bold text-gray-900 dark:text-white">HashGenPro</span>
                </div>
                <p className="text-gray-500 dark:text-gray-400 text-sm">AI-powered tools for the modern creator.</p>
             </div>
@@ -405,7 +401,7 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
             ))}
           </div>
           <div className="pt-8 border-t border-gray-100 dark:border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4">
-             <p className="text-gray-400 text-sm">© 2024 HashtagGenius AI. All rights reserved.</p>
+             <p className="text-gray-400 text-sm">© 2024 HashGenPro AI. All rights reserved.</p>
              <div className="flex gap-4">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/X_icon_2.svg" className="w-6 h-6 opacity-60 hover:opacity-100 cursor-pointer" alt="X" />
                 <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" className="w-6 h-6 opacity-60 hover:opacity-100 cursor-pointer" alt="Instagram" />
