@@ -73,19 +73,82 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 
 // Splash Loader Component
 const SplashLoader = () => (
-  <div className="fixed inset-0 z-[100] bg-gray-900 flex flex-col items-center justify-center text-white">
-    <div className="relative w-32 h-32 mb-8">
-      <div className="absolute inset-0 border-4 border-indigo-500/30 rounded-full animate-ping"></div>
-      <div className="absolute inset-2 border-4 border-purple-500/50 rounded-full animate-spin-slow"></div>
-      <div className="absolute inset-0 flex items-center justify-center">
-         <span className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 animate-pulse">AI</span>
+  <div className="fixed inset-0 z-[100] bg-gradient-to-br from-gray-900 via-indigo-900 to-purple-900 flex flex-col items-center justify-center text-white overflow-hidden">
+    {/* Animated Background Elements */}
+    <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute top-[-10%] left-[-5%] w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl animate-pulse"></div>
+      <div className="absolute bottom-[-10%] right-[-5%] w-[500px] h-[500px] bg-purple-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+    </div>
+
+    {/* Main Content */}
+    <div className="relative z-10 flex flex-col items-center">
+      {/* Logo with Advanced Animation */}
+      <div className="relative w-40 h-40 mb-12">
+        {/* Outer Rotating Ring */}
+        <div className="absolute inset-0 border-4 border-indigo-500/30 rounded-full animate-spin" style={{ animationDuration: '3s' }}></div>
+
+        {/* Middle Pulsing Ring */}
+        <div className="absolute inset-4 border-4 border-purple-500/40 rounded-full animate-ping"></div>
+
+        {/* Inner Counter-Rotating Ring */}
+        <div className="absolute inset-8 border-4 border-pink-500/30 rounded-full animate-spin" style={{ animationDuration: '2s', animationDirection: 'reverse' }}></div>
+
+        {/* Center Logo */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 flex items-center justify-center shadow-2xl shadow-indigo-500/50 animate-pulse">
+            <span className="text-4xl font-bold">#</span>
+          </div>
+        </div>
+
+        {/* Orbiting Dots */}
+        <div className="absolute inset-0 animate-spin" style={{ animationDuration: '4s' }}>
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3 h-3 bg-indigo-400 rounded-full shadow-lg shadow-indigo-500/50"></div>
+        </div>
+        <div className="absolute inset-0 animate-spin" style={{ animationDuration: '4s', animationDelay: '1s' }}>
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3 h-3 bg-purple-400 rounded-full shadow-lg shadow-purple-500/50"></div>
+        </div>
+        <div className="absolute inset-0 animate-spin" style={{ animationDuration: '4s', animationDelay: '2s' }}>
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3 h-3 bg-pink-400 rounded-full shadow-lg shadow-pink-500/50"></div>
+        </div>
+      </div>
+
+      {/* Brand Name */}
+      <h1 className="text-5xl font-extrabold mb-3 tracking-tight animate-fade-in">
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 animate-pulse-glow">
+          HashGenPro
+        </span>
+      </h1>
+      <p className="text-indigo-200 text-lg font-medium mb-8 animate-fade-in">Powered by AI</p>
+
+      {/* Progress Bar */}
+      <div className="w-80 h-2 bg-white/10 backdrop-blur-sm rounded-full overflow-hidden mb-4 shadow-lg">
+        <div className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full animate-[width_2.5s_ease-in-out_forwards] shadow-lg shadow-indigo-500/50" style={{ width: '0%' }}></div>
+      </div>
+
+      {/* Loading Text */}
+      <div className="flex items-center gap-2 text-indigo-200">
+        <div className="flex gap-1">
+          <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"></div>
+          <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+          <div className="w-2 h-2 bg-pink-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+        </div>
+        <p className="text-sm font-medium">Initializing AI Engine</p>
+      </div>
+
+      {/* Features Badges */}
+      <div className="flex gap-3 mt-12 flex-wrap justify-center max-w-md">
+        {['AI-Powered', 'Multi-Platform', 'Lightning Fast'].map((feature, i) => (
+          <div
+            key={i}
+            className="px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full text-xs font-medium text-white/80 animate-fade-in"
+            style={{ animationDelay: `${i * 0.2}s` }}
+          >
+            {feature}
+          </div>
+        ))}
       </div>
     </div>
-    <h1 className="text-3xl font-bold mb-2 tracking-widest animate-fade-in">HASHTAG GENIUS</h1>
-    <div className="w-64 h-1 bg-gray-800 rounded-full overflow-hidden mt-4">
-      <div className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 animate-[width_2.5s_ease-in-out_forwards]" style={{ width: '0%' }}></div>
-    </div>
-    <p className="text-gray-400 text-sm mt-4 animate-pulse">Initializing Neural Networks...</p>
   </div>
 );
 
