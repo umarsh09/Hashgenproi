@@ -13,6 +13,10 @@ const callDeepSeekAPI = async (
 ): Promise<string> => {
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
+      console.log(`🚀 DeepSeek API Call (Attempt ${attempt + 1}/${retries})`);
+      console.log('System:', systemPrompt.substring(0, 100) + '...');
+      console.log('User:', userPrompt.substring(0, 100) + '...');
+
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
@@ -66,6 +70,7 @@ const callDeepSeekAPI = async (
         throw new Error('Empty response from API');
       }
 
+      console.log('✅ DeepSeek API Success:', content.substring(0, 100) + '...');
       return content;
 
     } catch (error: any) {

@@ -141,7 +141,17 @@ export const UniversalGenerator: React.FC<UniversalGeneratorProps> = ({
                 ${isLoading ? 'bg-gray-400 dark:bg-gray-700 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-500 hover:shadow-indigo-500/25 transform active:scale-95'}
                 `}
             >
-               ✨ Generate {title}
+              {isLoading ? (
+                <>
+                  <div className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <span>Generating...</span>
+                </>
+              ) : (
+                <>
+                  <span>✨</span>
+                  <span>Generate {title}</span>
+                </>
+              )}
             </button>
          </div>
       </div>
