@@ -4,6 +4,7 @@ import { Sidebar } from './components/Sidebar';
 import { Generator } from './components/Generator';
 import { BioGenerator } from './components/BioGenerator';
 import { UniversalGenerator } from './components/UniversalGenerator';
+import { FigmaGenerator } from './components/FigmaGenerator';
 import { Analyzer } from './components/Analyzer';
 import { History } from './components/History';
 import { Home } from './components/Home';
@@ -356,7 +357,9 @@ const AppContainer: React.FC = () => {
         return <UniversalGenerator type="trend" title="Trend Watch" description="Spot viral trends in your niche." placeholder="Enter your industry..." icon="🔥" onGenerate={addToHistory} onBack={backToDashboard} />;
       case View.GENERATOR_EMOJI:
         return <UniversalGenerator type="emoji" title="Emoji Maker" description="Creative emoji art & combos." placeholder="What vibe are you looking for?" icon="🎨" onGenerate={addToHistory} onBack={backToDashboard} />;
-      
+      case View.GENERATOR_FIGMA:
+        return <FigmaGenerator onGenerate={addToHistory} onBack={backToDashboard} />;
+
       case View.ANALYZER_COMPETITOR:
         return <Analyzer type="competitor" onGenerate={addToHistory} onBack={backToDashboard} />;
       case View.ANALYZER_AUDIT:

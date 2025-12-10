@@ -29,6 +29,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, onL
         { id: View.GENERATOR_IDEA, label: 'Content Ideas', icon: '💡' },
         { id: View.GENERATOR_EMAIL, label: 'Email Writer', icon: '📧' },
         { id: View.GENERATOR_EMOJI, label: 'Emoji Maker', icon: '🎨' },
+        { id: View.GENERATOR_FIGMA, label: 'Figma Design', icon: '🎨' },
         { id: View.GENERATOR_TREND, label: 'Trend Watch', icon: '🔥' },
         { id: View.GENERATOR_SCHEDULE, label: 'Scheduler', icon: '📅' },
       ]
