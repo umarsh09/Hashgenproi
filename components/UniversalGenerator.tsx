@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { generateCreativeContent } from '../services/geminiService';
+import { generateCreativeContent } from '../services/deepseekService';
 import { useToast } from './CustomToast';
 import { LANGUAGES } from '../constants';
 
