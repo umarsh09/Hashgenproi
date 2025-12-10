@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Platform } from '../types';
 import { PLATFORMS, LANGUAGES } from '../constants';
-import { generateBio } from '../services/geminiService';
+import { generateBio } from '../services/deepseekService';
 import { useToast } from './CustomToast';
 
 interface BioGeneratorProps {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Platform } from '../types';
 import { PLATFORMS, LANGUAGES } from '../constants';
-import { generateHashtags } from '../services/geminiService';
+import { generateHashtags } from '../services/deepseekService';
 import { useToast } from './CustomToast';
 
 interface GeneratorProps {

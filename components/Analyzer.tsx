@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { analyzeContent } from '../services/geminiService';
+import { analyzeContent } from '../services/deepseekService';
 import { useToast } from './CustomToast';
 import { LANGUAGES } from '../constants';
 
