@@ -166,13 +166,22 @@ export const Generator: React.FC<GeneratorProps> = ({ onGenerate, onBack }) => {
                         title="Generate Hashtags"
                         className={`
                         px-8 py-4 rounded-xl font-bold text-white transition-all transform flex items-center justify-center gap-3 min-w-[200px] shadow-lg
-                        ${isLoading 
-                            ? 'bg-gray-400 dark:bg-gray-700 cursor-not-allowed opacity-80' 
+                        ${isLoading
+                            ? 'bg-gray-400 dark:bg-gray-700 cursor-not-allowed opacity-80'
                             : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 hover:shadow-indigo-500/25 hover:-translate-y-0.5 active:scale-95'}
                         `}
                     >
-                        <span className="text-xl">🚀</span>
-                        <span>Generate</span>
+                        {isLoading ? (
+                            <>
+                                <div className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                <span>Generating...</span>
+                            </>
+                        ) : (
+                            <>
+                                <span className="text-xl">🚀</span>
+                                <span>Generate</span>
+                            </>
+                        )}
                     </button>
                 </div>
             </div>

@@ -116,7 +116,17 @@ export const Analyzer: React.FC<AnalyzerProps> = ({ type, onGenerate, onBack }) 
             ${isLoading ? 'bg-gray-400 dark:bg-gray-700 cursor-not-allowed' : 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-400 hover:to-red-400 transform active:scale-95'}
             `}
          >
-            🚀 Start {title}
+           {isLoading ? (
+             <>
+               <div className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
+               <span>Analyzing...</span>
+             </>
+           ) : (
+             <>
+               <span>🚀</span>
+               <span>Start {title}</span>
+             </>
+           )}
          </button>
       </div>
 
