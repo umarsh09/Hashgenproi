@@ -10,14 +10,53 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, onLogout, isOpen, onClose }) => {
-  const menuItems = [
-    { id: View.HOME, label: 'Dashboard', icon: '📊' },
-    { id: View.GENERATOR_HASHTAG, label: 'Hashtag Generator', icon: '⚡' },
-    { id: View.GENERATOR_BIO, label: 'Bio Writer', icon: '✍️' },
-    { id: View.HISTORY, label: 'History', icon: '📜' },
-    { id: View.PRICING, label: 'Upgrade Plan', icon: '💎' },
-    { id: View.SETTINGS, label: 'Settings', icon: '⚙️' },
+  const [searchQuery, setSearchQuery] = React.useState('');
+
+  const menuSections = [
+    {
+      title: 'Main',
+      items: [
+        { id: View.HOME, label: 'Dashboard', icon: '📊' },
+      ]
+    },
+    {
+      title: 'Generators',
+      items: [
+        { id: View.GENERATOR_HASHTAG, label: 'Hashtags', icon: '⚡' },
+        { id: View.GENERATOR_BIO, label: 'Bio Writer', icon: '✍️' },
+        { id: View.GENERATOR_CAPTION, label: 'Captions', icon: '📝' },
+        { id: View.GENERATOR_SCRIPT, label: 'Reels Script', icon: '🎬' },
+        { id: View.GENERATOR_IDEA, label: 'Content Ideas', icon: '💡' },
+        { id: View.GENERATOR_EMAIL, label: 'Email Writer', icon: '📧' },
+        { id: View.GENERATOR_EMOJI, label: 'Emoji Maker', icon: '🎨' },
+        { id: View.GENERATOR_TREND, label: 'Trend Watch', icon: '🔥' },
+        { id: View.GENERATOR_SCHEDULE, label: 'Scheduler', icon: '📅' },
+      ]
+    },
+    {
+      title: 'Analyzers',
+      items: [
+        { id: View.ANALYZER_COMPETITOR, label: 'Competitor', icon: '🕵️' },
+        { id: View.ANALYZER_AUDIT, label: 'Profile Audit', icon: '🔍' },
+      ]
+    },
+    {
+      title: 'Account',
+      items: [
+        { id: View.HISTORY, label: 'History', icon: '📜' },
+        { id: View.PRICING, label: 'Upgrade Plan', icon: '💎' },
+        { id: View.SETTINGS, label: 'Settings', icon: '⚙️' },
+      ]
+    }
   ];
+
+  // Filter menu items based on search query
+  const filteredSections = menuSections.map(section => ({
+    ...section,
+    items: section.items.filter(item =>
+      item.label.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  })).filter(section => section.items.length > 0);
 
   return (
     <>
@@ -52,23 +91,62 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, onL
           </button>
         </div>
 
-        <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-          {menuItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => onViewChange(item.id)}
-              title={item.label}
-              className={`
-                w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium
-                ${currentView === item.id 
-                  ? 'bg-indigo-50 dark:bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20 shadow-sm translate-x-1' 
-                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white hover:translate-x-1'}
-              `}
-            >
-              <span className="text-xl">{item.icon}</span>
-              {item.label}
-            </button>
+        {/* Search Bar */}
+        <div className="px-4 pt-4 pb-2">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search tools..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-2 pl-10 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 transition-all"
+            />
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+              🔍
+            </span>
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1 rounded"
+                title="Clear search"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+        </div>
+
+        <nav className="flex-1 px-4 py-2 overflow-y-auto space-y-4">
+          {filteredSections.map((section) => (
+            <div key={section.title}>
+              <h3 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider px-4 mb-2">
+                {section.title}
+              </h3>
+              <div className="space-y-1">
+                {section.items.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => { onViewChange(item.id); onClose(); }}
+                    title={item.label}
+                    className={`
+                      w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 font-medium text-sm
+                      ${currentView === item.id
+                        ? 'bg-indigo-50 dark:bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20 shadow-sm translate-x-1'
+                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white hover:translate-x-1'}
+                    `}
+                  >
+                    <span className="text-lg">{item.icon}</span>
+                    <span className="truncate">{item.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
           ))}
+          {filteredSections.length === 0 && (
+            <div className="text-center py-8 text-gray-400 dark:text-gray-500 text-sm">
+              No tools found
+            </div>
+          )}
         </nav>
 
         <div className="p-4 border-t border-gray-200 dark:border-gray-800">

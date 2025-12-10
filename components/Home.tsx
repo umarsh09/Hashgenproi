@@ -14,17 +14,17 @@ interface HomeProps {
 export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = [], isDashboard = false, onNavigate }) => {
   // Features Linked to Views
   const dashboardFeatures = [
-    { title: 'Hashtags', icon: '⚡', desc: 'Viral tags', view: View.GENERATOR_HASHTAG, color: 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' },
-    { title: 'Bio Writer', icon: '✍️', desc: 'Perfect bios', view: View.GENERATOR_BIO, color: 'bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400' },
-    { title: 'Captions', icon: '📝', desc: 'Engaging posts', view: View.GENERATOR_CAPTION, color: 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' },
-    { title: 'Reels Script', icon: '🎬', desc: 'Video hooks', view: View.GENERATOR_SCRIPT, color: 'bg-pink-50 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400' },
-    { title: 'Story Ideas', icon: '💡', desc: 'Content ideas', view: View.GENERATOR_IDEA, color: 'bg-yellow-50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400' },
-    { title: 'Competitor', icon: '🕵️', desc: 'Spy profiles', view: View.ANALYZER_COMPETITOR, color: 'bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400' },
-    { title: 'Audit', icon: '🔍', desc: 'Profile score', view: View.ANALYZER_AUDIT, color: 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400' },
-    { title: 'Emoji', icon: '🎨', desc: 'Custom combos', view: View.GENERATOR_EMOJI, color: 'bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400' },
-    { title: 'Scheduler', icon: '📅', desc: 'Plan posts', view: View.GENERATOR_SCHEDULE, color: 'bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400' },
-    { title: 'Trends', icon: '🔥', desc: 'Viral topics', view: View.GENERATOR_TREND, color: 'bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400' },
-    { title: 'Email', icon: '📧', desc: 'Outreach', view: View.GENERATOR_EMAIL, color: 'bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400' },
+    { title: 'Hashtag Generator', icon: '⚡', desc: 'Create viral tags', view: View.GENERATOR_HASHTAG, color: 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' },
+    { title: 'Bio Writer', icon: '✍️', desc: 'Craft perfect bios', view: View.GENERATOR_BIO, color: 'bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400' },
+    { title: 'Caption Generator', icon: '📝', desc: 'Write engaging captions', view: View.GENERATOR_CAPTION, color: 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' },
+    { title: 'Reels Script', icon: '🎬', desc: 'Viral video scripts', view: View.GENERATOR_SCRIPT, color: 'bg-pink-50 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400' },
+    { title: 'Content Ideas', icon: '💡', desc: 'Get inspired daily', view: View.GENERATOR_IDEA, color: 'bg-yellow-50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400' },
+    { title: 'Competitor Analysis', icon: '🕵️', desc: 'Analyze competitors', view: View.ANALYZER_COMPETITOR, color: 'bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400' },
+    { title: 'Profile Audit', icon: '🔍', desc: 'Check your score', view: View.ANALYZER_AUDIT, color: 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400' },
+    { title: 'Emoji Maker', icon: '🎨', desc: 'Creative emoji art', view: View.GENERATOR_EMOJI, color: 'bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400' },
+    { title: 'Content Scheduler', icon: '📅', desc: 'Plan your posts', view: View.GENERATOR_SCHEDULE, color: 'bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400' },
+    { title: 'Trend Watch', icon: '🔥', desc: 'Spot viral trends', view: View.GENERATOR_TREND, color: 'bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400' },
+    { title: 'Email Writer', icon: '📧', desc: 'Professional outreach', view: View.GENERATOR_EMAIL, color: 'bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400' },
   ];
 
   const faqs = [
@@ -60,22 +60,40 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
 
     return (
       <div className="flex flex-col animate-fade-in space-y-8 pb-12">
-        {/* Welcome Section */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
-              Dashboard
-            </h1>
-            <p className="text-gray-500 dark:text-gray-400 mt-1">
-              Welcome back, <span className="text-indigo-600 dark:text-indigo-400 font-semibold">{user?.name}</span>.
-            </p>
+        {/* Welcome Section with Gradient Background */}
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 via-purple-500/5 to-pink-500/5 dark:from-indigo-500/10 dark:via-purple-500/10 dark:to-pink-500/10 rounded-3xl -z-10"></div>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 sm:p-8">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+                  Dashboard
+                </h1>
+                <span className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs font-bold rounded-full">Active</span>
+              </div>
+              <p className="text-gray-600 dark:text-gray-300 text-lg">
+                Welcome back, <span className="text-indigo-600 dark:text-indigo-400 font-bold">{user?.name}</span> 👋
+              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+              </p>
+            </div>
+            <div className="flex gap-3 self-start md:self-auto">
+              <button
+                onClick={() => onNavigate?.(View.GENERATOR_HASHTAG)}
+                className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/30 transition-all transform hover:-translate-y-1 hover:shadow-indigo-500/50 flex items-center gap-2"
+              >
+                <span>⚡</span> Generate Now
+              </button>
+              <button
+                onClick={() => onNavigate?.(View.HISTORY)}
+                className="px-6 py-3 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold rounded-xl border-2 border-gray-200 dark:border-gray-700 transition-all transform hover:-translate-y-1 flex items-center gap-2"
+              >
+                <span>📜</span>
+                <span className="hidden sm:inline">History</span>
+              </button>
+            </div>
           </div>
-          <button 
-             onClick={onStart}
-             className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/30 transition-all transform hover:-translate-y-1 hover:shadow-indigo-500/50 flex items-center gap-2 self-start md:self-auto"
-          >
-             <span>⚡</span> Quick Generate
-          </button>
         </div>
 
         {/* Analytics Stats Cards */}
@@ -136,12 +154,66 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
             </div>
         </div>
 
+        {/* Quick Actions & Trending Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Quick Actions */}
+            <div className="bg-gradient-to-br from-purple-500 to-pink-600 p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all group cursor-pointer" onClick={() => onNavigate?.(View.GENERATOR_HASHTAG)}>
+                <div className="flex items-start justify-between mb-4">
+                    <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-3xl backdrop-blur-sm">
+                        ⚡
+                    </div>
+                    <span className="text-white/80 text-xs font-medium bg-white/10 px-3 py-1 rounded-full">Popular</span>
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-2">Quick Generate</h3>
+                <p className="text-purple-100 text-sm mb-4">Generate viral hashtags in seconds</p>
+                <div className="flex items-center text-white font-medium text-sm group-hover:translate-x-1 transition-transform">
+                    Start Now <span className="ml-2">→</span>
+                </div>
+            </div>
+
+            {/* Trending Now */}
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-lg transition-all">
+                <div className="flex items-center gap-2 mb-4">
+                    <span className="text-2xl">🔥</span>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Trending Now</h3>
+                </div>
+                <div className="space-y-3">
+                    {['#AIContent', '#SocialMedia2024', '#CreatorEconomy', '#ViralMarketing'].map((tag, i) => (
+                        <div key={i} className="flex items-center justify-between group cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 p-2 rounded-lg transition-colors">
+                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{tag}</span>
+                            <span className="text-xs text-indigo-600 dark:text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity">Copy</span>
+                        </div>
+                    ))}
+                </div>
+                <button onClick={() => onNavigate?.(View.GENERATOR_TREND)} className="w-full mt-4 py-2 text-sm text-center text-indigo-600 dark:text-indigo-400 font-medium hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-colors">
+                    View All Trends
+                </button>
+            </div>
+
+            {/* Pro Tip */}
+            <div className="bg-gradient-to-br from-amber-400 to-orange-500 p-6 rounded-2xl shadow-lg relative overflow-hidden">
+                <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+                <div className="relative z-10">
+                    <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-3xl backdrop-blur-sm mb-4">
+                        💡
+                    </div>
+                    <h3 className="text-xl font-bold text-white mb-2">Pro Tip</h3>
+                    <p className="text-amber-50 text-sm leading-relaxed">
+                        Use 3-5 high-engagement hashtags with 8-12 niche tags for maximum reach on Instagram!
+                    </p>
+                </div>
+            </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Chart Section */}
-            <div className="lg:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
+            <div className="lg:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-lg transition-all">
                 <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Usage Analytics</h3>
-                    <select className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-sm rounded-lg px-3 py-1 text-gray-600 dark:text-gray-300 outline-none">
+                    <div className="flex items-center gap-2">
+                        <span className="text-2xl">📈</span>
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Usage Analytics</h3>
+                    </div>
+                    <select className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-sm rounded-lg px-3 py-2 text-gray-600 dark:text-gray-300 outline-none cursor-pointer hover:border-indigo-500 transition-colors">
                         <option>Last 7 Days</option>
                         <option>Last 30 Days</option>
                     </select>
@@ -150,67 +222,129 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
                 <div className="h-64 w-full flex items-end justify-between gap-2 px-2">
                     {[35, 55, 40, 70, 45, 90, 65].map((h, i) => (
                         <div key={i} className="flex flex-col items-center gap-2 flex-1 group cursor-pointer">
-                            <div className="relative w-full rounded-t-lg bg-indigo-50 dark:bg-indigo-900/20 h-full flex items-end overflow-hidden">
-                                 <div 
-                                    className="w-full bg-indigo-500 dark:bg-indigo-500/80 rounded-t-lg transition-all duration-500 group-hover:bg-indigo-400 relative" 
+                            <div className="relative w-full rounded-t-lg bg-gradient-to-t from-indigo-50 to-transparent dark:from-indigo-900/20 h-full flex items-end overflow-hidden">
+                                 <div
+                                    className="w-full bg-gradient-to-t from-indigo-600 to-indigo-400 dark:from-indigo-500 dark:to-indigo-300 rounded-t-lg transition-all duration-500 group-hover:from-purple-600 group-hover:to-pink-400 relative shadow-lg"
                                     style={{ height: `${h}%` }}
                                  >
-                                    <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                                        {h}
+                                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-gray-700 text-white text-xs py-1.5 px-3 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shadow-xl">
+                                        <div className="font-bold">{h} items</div>
+                                        <div className="text-[10px] text-gray-300">{['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i]}</div>
                                     </div>
                                  </div>
                             </div>
-                            <span className="text-xs text-gray-400">{['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i]}</span>
+                            <span className="text-xs font-medium text-gray-500 dark:text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{['M', 'T', 'W', 'T', 'F', 'S', 'S'][i]}</span>
                         </div>
                     ))}
+                </div>
+                <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-indigo-500"></div>
+                        <span className="text-gray-600 dark:text-gray-400">Total: <span className="font-bold text-gray-900 dark:text-white">{totalGenerations}</span></span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                        <span className="text-gray-600 dark:text-gray-400">Avg: <span className="font-bold text-gray-900 dark:text-white">{Math.round(totalGenerations / 7)}/day</span></span>
+                    </div>
                 </div>
             </div>
 
             {/* Recent Activity */}
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">Recent Activity</h3>
-                <div className="space-y-6">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-lg transition-all">
+                <div className="flex items-center gap-2 mb-6">
+                    <span className="text-2xl">⏱️</span>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Recent Activity</h3>
+                </div>
+                <div className="space-y-4">
                     {recentActivity.length > 0 ? recentActivity.map((item, i) => (
-                        <div key={i} className="flex gap-4 items-start group">
-                             <div className={`mt-1 w-8 h-8 rounded-full flex items-center justify-center text-xs flex-shrink-0 transition-transform group-hover:scale-110 ${item.type === 'bio' ? 'bg-purple-100 text-purple-600' : 'bg-blue-100 text-blue-600'}`}>
+                        <div key={i} className="flex gap-3 items-start group p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all cursor-pointer">
+                             <div className={`mt-0.5 w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0 transition-transform group-hover:scale-110 shadow-sm ${
+                                item.type === 'bio' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400' :
+                                item.type === 'hashtag' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' :
+                                'bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400'
+                             }`}>
                                 {item.type === 'bio' ? '✍️' : (item.type === 'hashtag' ? '#' : '✨')}
                              </div>
-                             <div>
-                                 <p className="text-sm font-medium text-gray-900 dark:text-white line-clamp-1">{item.keyword}</p>
-                                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 capitalize">
-                                    {item.type} • {new Date(item.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                             <div className="flex-1 min-w-0">
+                                 <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{item.keyword}</p>
+                                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 capitalize flex items-center gap-2">
+                                    <span>{item.type}</span>
+                                    <span>•</span>
+                                    <span>{new Date(item.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                                  </p>
                              </div>
                         </div>
                     )) : (
-                        <p className="text-gray-500 text-sm text-center py-8">No activity yet. Start generating!</p>
+                        <div className="text-center py-12">
+                            <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <span className="text-3xl">📭</span>
+                            </div>
+                            <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">No activity yet</p>
+                            <p className="text-gray-400 dark:text-gray-500 text-xs mt-1">Start creating content!</p>
+                        </div>
                     )}
                     {recentActivity.length > 0 && (
-                        <button onClick={() => onNavigate?.(View.HISTORY)} className="w-full py-2 text-sm text-center text-indigo-600 dark:text-indigo-400 font-medium hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-colors">
-                            View Full History
+                        <button onClick={() => onNavigate?.(View.HISTORY)} className="w-full py-2.5 text-sm text-center text-indigo-600 dark:text-indigo-400 font-semibold hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-xl transition-all border border-transparent hover:border-indigo-200 dark:hover:border-indigo-500/30">
+                            View All Activity →
                         </button>
                     )}
                 </div>
             </div>
         </div>
 
+        {/* Achievement Badge */}
+        {totalGenerations >= 10 && (
+          <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-1 rounded-2xl shadow-xl">
+            <div className="bg-white dark:bg-gray-900 p-6 rounded-xl">
+              <div className="flex items-start gap-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl flex items-center justify-center text-4xl shadow-lg transform -rotate-6">
+                  🏆
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">Achievement Unlocked!</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">
+                    {totalGenerations >= 100 ? "Content Master 🎖️ - 100+ generations!" :
+                     totalGenerations >= 50 ? "Rising Star ⭐ - 50+ generations!" :
+                     "Creator 🚀 - 10+ generations!"}
+                  </p>
+                  <div className="mt-3 bg-gray-100 dark:bg-gray-800 rounded-full h-2 overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-1000"
+                      style={{ width: `${Math.min((totalGenerations / 100) * 100, 100)}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                    {totalGenerations < 100 ? `${100 - totalGenerations} more to reach Content Master!` : "You're a Content Master! 🎉"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Tools Grid - 3D Perspective */}
         <div>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-                <span>🛠️</span> Creative Studio
-            </h2>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <span>🛠️</span>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Creative Studio</h2>
+              </div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                {dashboardFeatures.length} tools available
+              </div>
+            </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 card-3d-container">
                 {dashboardFeatures.map((feature, idx) => (
                 <div
                     key={idx}
                     onClick={() => onNavigate?.(feature.view)}
-                    className="card-3d group p-4 rounded-xl border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-indigo-500/50 cursor-pointer flex flex-col items-center text-center"
+                    className="card-3d group p-4 sm:p-5 rounded-xl sm:rounded-2xl border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-indigo-500/50 cursor-pointer flex flex-col items-center text-center transition-all hover:shadow-xl"
                 >
-                    <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center text-2xl sm:text-3xl mb-3 ${feature.color}`}>
+                    <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center text-2xl sm:text-3xl mb-3 transition-transform group-hover:scale-110 ${feature.color}`}>
                         {feature.icon}
                     </div>
-                    <h3 className="text-sm font-bold text-gray-900 dark:text-white group-hover:text-indigo-500 transition-colors">{feature.title}</h3>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{feature.desc}</p>
+                    <h3 className="text-sm font-bold text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{feature.title}</h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">{feature.desc}</p>
                 </div>
                 ))}
             </div>
