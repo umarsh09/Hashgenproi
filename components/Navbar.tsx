@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { UserProfile, View } from '../types';
 
 interface NavbarProps {
@@ -11,16 +11,57 @@ interface NavbarProps {
   toggleTheme: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ 
-  user, 
-  toggleSidebar, 
-  onViewChange, 
-  onLogout, 
+export const Navbar: React.FC<NavbarProps> = ({
+  user,
+  toggleSidebar,
+  onViewChange,
+  onLogout,
   isAppMode,
   isDarkMode,
   toggleTheme
 }) => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  // All available tools for search
+  const allTools = [
+    { id: View.HOME, label: 'Dashboard', icon: '📊', category: 'Main' },
+    { id: View.GENERATOR_HASHTAG, label: 'Hashtag Generator', icon: '⚡', category: 'Generators' },
+    { id: View.GENERATOR_BIO, label: 'Bio Writer', icon: '✍️', category: 'Generators' },
+    { id: View.GENERATOR_CAPTION, label: 'Caption Generator', icon: '📝', category: 'Generators' },
+    { id: View.GENERATOR_SCRIPT, label: 'Reels Script', icon: '🎬', category: 'Generators' },
+    { id: View.GENERATOR_IDEA, label: 'Content Ideas', icon: '💡', category: 'Generators' },
+    { id: View.GENERATOR_EMAIL, label: 'Email Writer', icon: '📧', category: 'Generators' },
+    { id: View.GENERATOR_EMOJI, label: 'Emoji Maker', icon: '🎨', category: 'Generators' },
+    { id: View.GENERATOR_TREND, label: 'Trend Watch', icon: '🔥', category: 'Generators' },
+    { id: View.GENERATOR_SCHEDULE, label: 'Content Scheduler', icon: '📅', category: 'Generators' },
+    { id: View.ANALYZER_COMPETITOR, label: 'Competitor Analysis', icon: '🕵️', category: 'Analyzers' },
+    { id: View.ANALYZER_AUDIT, label: 'Profile Audit', icon: '🔍', category: 'Analyzers' },
+    { id: View.HISTORY, label: 'History', icon: '📜', category: 'Account' },
+    { id: View.SETTINGS, label: 'Settings', icon: '⚙️', category: 'Account' },
+    { id: View.PRICING, label: 'Upgrade Plan', icon: '💎', category: 'Account' },
+  ];
+
+  const filteredTools = searchQuery
+    ? allTools.filter(tool =>
+        tool.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        tool.category.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
+
+  // Close search on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowSearch(false);
+        setSearchQuery('');
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Common Logo Component
   const Logo = () => (
@@ -68,9 +109,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   // App Dashboard Navbar (Logged In)
   return (
     <header className="h-20 bg-white/80 dark:bg-gray-900/50 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-4 md:px-8 sticky top-0 z-20 shadow-sm transition-colors duration-300">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 flex-1">
         {/* Hamburger Menu for Sidebar */}
-        <button 
+        <button
           onClick={toggleSidebar}
           className="md:hidden p-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
         >
@@ -78,14 +119,84 @@ export const Navbar: React.FC<NavbarProps> = ({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
-        
+
         {/* Logo in Dashboard */}
         <div className="hidden sm:block">
            <Logo />
         </div>
+
+        {/* Search Bar */}
+        <div className="flex-1 max-w-md mx-4 hidden md:block" ref={searchRef}>
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search tools... (Ctrl+K)"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => setShowSearch(true)}
+              className="w-full px-4 py-2 pl-10 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 transition-all"
+            />
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg">
+              🔍
+            </span>
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1 rounded"
+                title="Clear search"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+
+          {/* Search Results Dropdown */}
+          {showSearch && searchQuery && (
+            <div className="absolute top-full mt-2 w-full bg-white dark:bg-gray-800 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 max-h-96 overflow-y-auto z-50">
+              {filteredTools.length > 0 ? (
+                <div className="py-2">
+                  {filteredTools.map((tool) => (
+                    <button
+                      key={tool.id}
+                      onClick={() => {
+                        onViewChange(tool.id);
+                        setShowSearch(false);
+                        setSearchQuery('');
+                      }}
+                      className="w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-left"
+                    >
+                      <span className="text-2xl">{tool.icon}</span>
+                      <div className="flex-1">
+                        <div className="text-sm font-medium text-gray-900 dark:text-white">
+                          {tool.label}
+                        </div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                          {tool.category}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-8 text-center text-gray-500 dark:text-gray-400 text-sm">
+                  No tools found for "{searchQuery}"
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="relative flex items-center gap-4">
+        {/* Mobile Search Icon */}
+        <button
+          onClick={() => setShowSearch(!showSearch)}
+          className="md:hidden p-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
+          title="Search"
+        >
+          <span className="text-xl">🔍</span>
+        </button>
+
         <ThemeToggle />
 
         <button 

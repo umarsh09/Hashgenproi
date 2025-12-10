@@ -14,17 +14,17 @@ interface HomeProps {
 export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = [], isDashboard = false, onNavigate }) => {
   // Features Linked to Views
   const dashboardFeatures = [
-    { title: 'Hashtags', icon: '⚡', desc: 'Viral tags', view: View.GENERATOR_HASHTAG, color: 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' },
-    { title: 'Bio Writer', icon: '✍️', desc: 'Perfect bios', view: View.GENERATOR_BIO, color: 'bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400' },
-    { title: 'Captions', icon: '📝', desc: 'Engaging posts', view: View.GENERATOR_CAPTION, color: 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' },
-    { title: 'Reels Script', icon: '🎬', desc: 'Video hooks', view: View.GENERATOR_SCRIPT, color: 'bg-pink-50 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400' },
-    { title: 'Story Ideas', icon: '💡', desc: 'Content ideas', view: View.GENERATOR_IDEA, color: 'bg-yellow-50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400' },
-    { title: 'Competitor', icon: '🕵️', desc: 'Spy profiles', view: View.ANALYZER_COMPETITOR, color: 'bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400' },
-    { title: 'Audit', icon: '🔍', desc: 'Profile score', view: View.ANALYZER_AUDIT, color: 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400' },
-    { title: 'Emoji', icon: '🎨', desc: 'Custom combos', view: View.GENERATOR_EMOJI, color: 'bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400' },
-    { title: 'Scheduler', icon: '📅', desc: 'Plan posts', view: View.GENERATOR_SCHEDULE, color: 'bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400' },
-    { title: 'Trends', icon: '🔥', desc: 'Viral topics', view: View.GENERATOR_TREND, color: 'bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400' },
-    { title: 'Email', icon: '📧', desc: 'Outreach', view: View.GENERATOR_EMAIL, color: 'bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400' },
+    { title: 'Hashtag Generator', icon: '⚡', desc: 'Create viral tags', view: View.GENERATOR_HASHTAG, color: 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' },
+    { title: 'Bio Writer', icon: '✍️', desc: 'Craft perfect bios', view: View.GENERATOR_BIO, color: 'bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400' },
+    { title: 'Caption Generator', icon: '📝', desc: 'Write engaging captions', view: View.GENERATOR_CAPTION, color: 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' },
+    { title: 'Reels Script', icon: '🎬', desc: 'Viral video scripts', view: View.GENERATOR_SCRIPT, color: 'bg-pink-50 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400' },
+    { title: 'Content Ideas', icon: '💡', desc: 'Get inspired daily', view: View.GENERATOR_IDEA, color: 'bg-yellow-50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400' },
+    { title: 'Competitor Analysis', icon: '🕵️', desc: 'Analyze competitors', view: View.ANALYZER_COMPETITOR, color: 'bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400' },
+    { title: 'Profile Audit', icon: '🔍', desc: 'Check your score', view: View.ANALYZER_AUDIT, color: 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400' },
+    { title: 'Emoji Maker', icon: '🎨', desc: 'Creative emoji art', view: View.GENERATOR_EMOJI, color: 'bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400' },
+    { title: 'Content Scheduler', icon: '📅', desc: 'Plan your posts', view: View.GENERATOR_SCHEDULE, color: 'bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400' },
+    { title: 'Trend Watch', icon: '🔥', desc: 'Spot viral trends', view: View.GENERATOR_TREND, color: 'bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400' },
+    { title: 'Email Writer', icon: '📧', desc: 'Professional outreach', view: View.GENERATOR_EMAIL, color: 'bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400' },
   ];
 
   const faqs = [
@@ -70,11 +70,11 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
               Welcome back, <span className="text-indigo-600 dark:text-indigo-400 font-semibold">{user?.name}</span>.
             </p>
           </div>
-          <button 
-             onClick={onStart}
+          <button
+             onClick={() => onNavigate?.(View.GENERATOR_HASHTAG)}
              className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/30 transition-all transform hover:-translate-y-1 hover:shadow-indigo-500/50 flex items-center gap-2 self-start md:self-auto"
           >
-             <span>⚡</span> Quick Generate
+             <span>⚡</span> Generate Hashtags
           </button>
         </div>
 
