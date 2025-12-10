@@ -3,51 +3,85 @@ import { Platform } from '../types';
 const DEEPSEEK_API_KEY = 'sk-01cb9d992e534c868236b6ab13734d19';
 const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions';
 
-// Helper function to call DeepSeek API
+// Helper function to call DeepSeek API with retry logic
 const callDeepSeekAPI = async (
   systemPrompt: string,
   userPrompt: string,
   temperature: number = 0.7,
-  jsonMode: boolean = false
+  jsonMode: boolean = false,
+  retries: number = 3
 ): Promise<string> => {
-  try {
-    const response = await fetch(DEEPSEEK_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: 'deepseek-chat',
-        messages: [
-          {
-            role: 'system',
-            content: systemPrompt
-          },
-          {
-            role: 'user',
-            content: userPrompt
+  for (let attempt = 0; attempt < retries; attempt++) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
+      const response = await fetch(DEEPSEEK_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'deepseek-chat',
+          messages: [
+            {
+              role: 'system',
+              content: systemPrompt
+            },
+            {
+              role: 'user',
+              content: userPrompt
+            }
+          ],
+          temperature: temperature,
+          max_tokens: 2000,
+          stream: false,
+          ...(jsonMode && { response_format: { type: 'json_object' } })
+        }),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        console.error('DeepSeek API Error:', errorData);
+
+        // If rate limited or server error, retry
+        if (response.status === 429 || response.status >= 500) {
+          if (attempt < retries - 1) {
+            await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1))); // Exponential backoff
+            continue;
           }
-        ],
-        temperature: temperature,
-        max_tokens: 2000,
-        ...(jsonMode && { response_format: { type: 'json_object' } })
-      })
-    });
+        }
+        throw new Error(`API Error: ${response.status} - ${errorData.error?.message || 'Request failed'}`);
+      }
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      console.error('DeepSeek API Error:', errorData);
-      throw new Error(`API Error: ${response.status}`);
+      const data = await response.json();
+      const content = data.choices?.[0]?.message?.content || '';
+
+      if (!content) {
+        throw new Error('Empty response from API');
+      }
+
+      return content;
+
+    } catch (error: any) {
+      console.error(`DeepSeek API Call Failed (Attempt ${attempt + 1}/${retries}):`, error);
+
+      // If this is the last retry, throw the error
+      if (attempt === retries - 1) {
+        throw error;
+      }
+
+      // Wait before retrying (exponential backoff)
+      await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
     }
-
-    const data = await response.json();
-    return data.choices[0]?.message?.content || '';
-
-  } catch (error) {
-    console.error('DeepSeek API Call Failed:', error);
-    throw error;
   }
+
+  throw new Error('Max retries exceeded');
 };
 
 export const generateHashtags = async (
