@@ -327,3 +327,40 @@ Language: ${language}`;
     return `Error analyzing content. Please try again later.`;
   }
 };
+
+export const generateFigmaDesign = async (
+  description: string,
+  designType: string,
+  language: string = 'English'
+): Promise<string> => {
+  try {
+    const systemPrompt = `You are an expert UI/UX designer and design consultant specializing in Figma.
+You provide detailed design concepts, color palettes, layout suggestions, and component specifications.
+Always respond in ${language} language.
+Be specific, practical, and creative with design recommendations.`;
+
+    const userPrompt = `Create a comprehensive design concept for a ${designType} with the following description:
+
+"${description}"
+
+Provide a detailed design brief including:
+1. Design Concept Overview (main idea and visual direction)
+2. Color Palette (5-6 specific colors with hex codes and their usage)
+3. Typography Recommendations (font families, sizes, and hierarchy)
+4. Layout Structure (specific layout details and component placement)
+5. Visual Elements (icons, images, shapes, and their styling)
+6. Design System Notes (spacing, borders, shadows, etc.)
+7. Call-to-Action Elements (buttons, links, and their styling)
+
+Make it actionable and ready to implement in Figma.
+Language: ${language}`;
+
+    const designConcept = await callDeepSeekAPI(systemPrompt, userPrompt, 0.8);
+
+    return designConcept.trim() || "Design concept generation failed.";
+
+  } catch (error) {
+    console.error("DeepSeek Figma Design Error:", error);
+    return `Error generating design concept. Please try again later.`;
+  }
+};

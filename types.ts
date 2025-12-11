@@ -25,7 +25,8 @@ export enum View {
   GENERATOR_TREND = 'GENERATOR_TREND',
   ANALYZER_COMPETITOR = 'ANALYZER_COMPETITOR',
   ANALYZER_AUDIT = 'ANALYZER_AUDIT',
-  ANALYTICS_FULL = 'ANALYTICS_FULL'
+  ANALYTICS_FULL = 'ANALYTICS_FULL',
+  GENERATOR_FIGMA = 'GENERATOR_FIGMA'
 }
 
 export interface PlatformConfig {
@@ -40,7 +41,7 @@ export interface PlatformConfig {
 export interface GenerationResult {
   id: string;
   timestamp: number;
-  type: 'hashtag' | 'bio' | 'caption' | 'script' | 'idea' | 'email' | 'audit' | 'analysis';
+  type: 'hashtag' | 'bio' | 'caption' | 'script' | 'idea' | 'email' | 'audit' | 'analysis' | 'figma';
   platform: Platform | string;
   keyword: string;
   result: string[] | string; // Tags array or String content
