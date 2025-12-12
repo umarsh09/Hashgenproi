@@ -13,11 +13,7 @@ import { Pricing } from './components/Pricing';
 import { Settings } from './components/Settings';
 import { CustomToastProvider } from './components/CustomToast';
 import { View, GenerationResult, UserProfile } from './types';
-
-// Mock database type
-interface RegisteredUser extends UserProfile {
-  password: string;
-}
+import { onAuthStateChange, logoutUser } from './services/authService';
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -171,27 +167,21 @@ const AppContainer: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [loadingApp, setLoadingApp] = useState(true);
-  
-  // Persistence State with Safety Checks
-  const [user, setUser] = useState<UserProfile | null>(() => {
-    try {
-      const saved = localStorage.getItem('hg_current_user');
-      return saved ? JSON.parse(saved) : null;
-    } catch (e) {
-      console.error("Error parsing user data", e);
-      return null;
-    }
-  });
 
-  const [registeredUsers, setRegisteredUsers] = useState<RegisteredUser[]>(() => {
-    try {
-      const saved = localStorage.getItem('hg_users');
-      return saved ? JSON.parse(saved) : [];
-    } catch (e) {
-      console.error("Error parsing registered users", e);
-      return [];
-    }
-  });
+  // User State - managed by Firebase
+  const [user, setUser] = useState<UserProfile | null>(null);
+
+  // Firebase Auth State Listener
+  useEffect(() => {
+    const unsubscribe = onAuthStateChange((firebaseUser) => {
+      setUser(firebaseUser);
+      if (!firebaseUser && currentView !== View.HOME) {
+        setCurrentView(View.HOME);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   // Initial App Load Simulation
   useEffect(() => {
@@ -201,20 +191,7 @@ const AppContainer: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Save to Local Storage on Change
-  useEffect(() => {
-    try {
-      localStorage.setItem('hg_users', JSON.stringify(registeredUsers));
-    } catch (e) { console.error("Saving users failed", e); }
-  }, [registeredUsers]);
-
-  useEffect(() => {
-    try {
-      if (user) localStorage.setItem('hg_current_user', JSON.stringify(user));
-      else localStorage.removeItem('hg_current_user');
-    } catch (e) { console.error("Saving current user failed", e); }
-  }, [user]);
-
+  // Save History to Local Storage
   useEffect(() => {
     try {
       localStorage.setItem('hg_history', JSON.stringify(history));
@@ -232,73 +209,26 @@ const AppContainer: React.FC = () => {
 
   const toggleTheme = () => setIsDarkMode(!isDarkMode);
 
-  // AUTHENTICATION LOGIC
-  const handleLogin = (email: string, pass: string): boolean => {
-    const foundUser = registeredUsers.find(u => u.email === email && u.password === pass);
-    if (foundUser) {
-      setUser({
-        name: foundUser.name,
-        email: foundUser.email,
-        avatar: foundUser.avatar,
-        plan: foundUser.plan
-      });
+  // AUTHENTICATION LOGIC - Firebase
+  const handleAuthSuccess = (authenticatedUser: UserProfile) => {
+    setUser(authenticatedUser);
+    setCurrentView(View.HOME);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      setUser(null);
       setCurrentView(View.HOME);
-      return true;
+      setSidebarOpen(false);
+    } catch (error) {
+      console.error('Logout error:', error);
     }
-    return false;
-  };
-
-  const handleRegister = (name: string, email: string, pass: string): boolean => {
-    if (registeredUsers.find(u => u.email === email)) {
-      return false; // User exists
-    }
-    const newUser: RegisteredUser = {
-      name,
-      email,
-      password: pass,
-      avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${name}`,
-      plan: 'free'
-    };
-    setRegisteredUsers([...registeredUsers, newUser]);
-    
-    // Auto login after register
-    setUser({
-      name: newUser.name,
-      email: newUser.email,
-      avatar: newUser.avatar,
-      plan: newUser.plan
-    });
-    setCurrentView(View.HOME);
-    return true;
-  };
-
-  const handleLogout = () => {
-    setUser(null);
-    setCurrentView(View.HOME);
-    setSidebarOpen(false);
   };
 
   const updateUserProfile = (updatedUser: UserProfile) => {
     setUser(updatedUser);
-    setRegisteredUsers(prev => prev.map(u => u.email === updatedUser.email ? { ...u, ...updatedUser } : u));
-  };
-
-  const handlePasswordUpdate = (currentPass: string, newPass: string): boolean => {
-    if (!user) return false;
-    
-    const userIndex = registeredUsers.findIndex(u => u.email === user.email);
-    if (userIndex === -1) return false;
-
-    const registeredUser = registeredUsers[userIndex];
-
-    if (registeredUser.password !== currentPass) {
-      return false;
-    }
-
-    const updatedUsers = [...registeredUsers];
-    updatedUsers[userIndex] = { ...registeredUser, password: newPass };
-    setRegisteredUsers(updatedUsers);
-    return true;
+    // Note: Firebase profile updates are handled in Settings component
   };
 
   const addToHistory = (item: GenerationResult) => {
@@ -330,7 +260,7 @@ const AppContainer: React.FC = () => {
           />
         );
       case View.AUTH:
-        return <Auth onLogin={handleLogin} onRegister={handleRegister} onBack={backToDashboard} />;
+        return <Auth onSuccess={handleAuthSuccess} onBack={backToDashboard} />;
       case View.PRICING:
         return <Pricing onSelectPlan={() => setCurrentView(user ? View.GENERATOR_HASHTAG : View.AUTH)} onBack={backToDashboard} isLoggedIn={!!user} />;
       case View.GENERATOR_HASHTAG:
@@ -340,7 +270,7 @@ const AppContainer: React.FC = () => {
       case View.HISTORY:
         return <History history={history} onBack={backToDashboard} />;
       case View.SETTINGS:
-        return <Settings user={user!} onUpdateUser={updateUserProfile} onUpdatePassword={handlePasswordUpdate} isDarkMode={isDarkMode} toggleTheme={toggleTheme} onBack={backToDashboard} />;
+        return <Settings user={user!} onUpdateUser={updateUserProfile} isDarkMode={isDarkMode} toggleTheme={toggleTheme} onBack={backToDashboard} />;
       
       // New Tools
       case View.GENERATOR_CAPTION:

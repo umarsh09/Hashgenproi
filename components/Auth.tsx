@@ -1,21 +1,22 @@
 import React, { useState } from 'react';
+import { registerUser, loginUser, loginWithGoogle } from '../services/authService';
+import { UserProfile } from '../types';
 
 interface AuthProps {
-  onLogin: (email: string, pass: string) => boolean;
-  onRegister: (name: string, email: string, pass: string) => boolean;
+  onSuccess: (user: UserProfile) => void;
   onBack: () => void;
   initialMode?: 'login' | 'signup';
 }
 
-export const Auth: React.FC<AuthProps> = ({ onLogin, onRegister, onBack, initialMode = 'login' }) => {
+export const Auth: React.FC<AuthProps> = ({ onSuccess, onBack, initialMode = 'login' }) => {
   const [isLogin, setIsLogin] = useState(initialMode === 'login');
   const [loading, setLoading] = useState(false);
-  
+
   // Form State
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  
+
   // Error States
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<{name?: boolean, email?: boolean, password?: boolean}>({});
@@ -28,14 +29,14 @@ export const Auth: React.FC<AuthProps> = ({ onLogin, onRegister, onBack, initial
       );
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
     const newFieldErrors: any = {};
     let hasError = false;
 
     // Validation
-    if (!isLogin && !name) {
+    if (!isLogin && !name.trim()) {
        newFieldErrors.name = true;
        hasError = true;
     }
@@ -56,29 +57,41 @@ export const Auth: React.FC<AuthProps> = ({ onLogin, onRegister, onBack, initial
 
     setFieldErrors({});
     setLoading(true);
-    
-    // Simulate API delay
-    setTimeout(() => {
-      setLoading(false);
-      
+
+    try {
+      let user: UserProfile;
+
       if (isLogin) {
-        const success = onLogin(email, password);
-        if (success) {
-           // Success handled by parent
-        } else {
-            setErrorMsg("Invalid email or password. Please try again.");
-            setFieldErrors({ email: true, password: true });
-        }
+        // Firebase Login
+        user = await loginUser(email, password);
       } else {
-        const success = onRegister(name, email, password);
-        if (success) {
-           // Success handled by parent
-        } else {
-            setErrorMsg("An account with this email already exists.");
-            setFieldErrors({ email: true });
-        }
+        // Firebase Register
+        user = await registerUser(email, password, name);
       }
-    }, 1000);
+
+      // Success!
+      onSuccess(user);
+
+    } catch (error: any) {
+      setErrorMsg(error.message);
+      setFieldErrors({ email: true, password: true });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    setErrorMsg(null);
+
+    try {
+      const user = await loginWithGoogle();
+      onSuccess(user);
+    } catch (error: any) {
+      setErrorMsg(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -115,14 +128,14 @@ export const Auth: React.FC<AuthProps> = ({ onLogin, onRegister, onBack, initial
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
             </span>
-            10,000+ Active Users
+            Powered by Firebase
           </div>
 
-          <h2 className="text-6xl font-extrabold mb-6 leading-tight">
+          <h2 className="text-5xl md:text-6xl font-extrabold mb-6 leading-tight">
             Ignite your<br/>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-pink-200">social presence</span>
           </h2>
-          <p className="text-2xl text-white/90 max-w-md leading-relaxed mb-12">
+          <p className="text-xl md:text-2xl text-white/90 max-w-md leading-relaxed mb-12">
             Join thousands of creators using AI to generate hashtags, bios, and captions that actually convert.
           </p>
 
@@ -163,17 +176,17 @@ export const Auth: React.FC<AuthProps> = ({ onLogin, onRegister, onBack, initial
       </div>
 
       {/* Right Side - Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white dark:bg-gray-900 transition-colors relative z-10">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-8 bg-white dark:bg-gray-900 transition-colors relative z-10">
         <div className="w-full max-w-md space-y-8">
           {/* Logo & Title */}
           <div className="text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 text-white font-bold text-2xl mb-6 shadow-2xl shadow-indigo-500/50 transform hover:scale-110 transition-transform">
               #
             </div>
-            <h2 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-2">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-2">
               {isLogin ? 'Welcome back!' : 'Get started'}
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400">
+            <p className="text-base md:text-lg text-gray-600 dark:text-gray-400">
               {isLogin ? 'Enter your details to access your workspace' : 'Create your free account today'}
             </p>
           </div>
@@ -208,7 +221,8 @@ export const Auth: React.FC<AuthProps> = ({ onLogin, onRegister, onBack, initial
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className={`w-full bg-gray-50 dark:bg-gray-800 border rounded-xl pl-12 pr-4 py-4 text-gray-900 dark:text-white focus:outline-none transition-all text-base ${fieldErrors.name ? 'border-red-500 focus:ring-2 focus:ring-red-500' : 'border-gray-300 dark:border-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/50 focus:bg-white dark:focus:bg-gray-750'}`}
+                    disabled={loading}
+                    className={`w-full bg-gray-50 dark:bg-gray-800 border rounded-xl pl-12 pr-4 py-3 sm:py-4 text-gray-900 dark:text-white focus:outline-none transition-all text-base disabled:opacity-50 ${fieldErrors.name ? 'border-red-500 focus:ring-2 focus:ring-red-500' : 'border-gray-300 dark:border-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/50 focus:bg-white dark:focus:bg-gray-750'}`}
                     placeholder="John Doe"
                   />
                 </div>
@@ -225,7 +239,8 @@ export const Auth: React.FC<AuthProps> = ({ onLogin, onRegister, onBack, initial
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className={`w-full bg-gray-50 dark:bg-gray-800 border rounded-xl pl-12 pr-4 py-4 text-gray-900 dark:text-white focus:outline-none transition-all text-base ${fieldErrors.email ? 'border-red-500 focus:ring-2 focus:ring-red-500' : 'border-gray-300 dark:border-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/50 focus:bg-white dark:focus:bg-gray-750'}`}
+                  disabled={loading}
+                  className={`w-full bg-gray-50 dark:bg-gray-800 border rounded-xl pl-12 pr-4 py-3 sm:py-4 text-gray-900 dark:text-white focus:outline-none transition-all text-base disabled:opacity-50 ${fieldErrors.email ? 'border-red-500 focus:ring-2 focus:ring-red-500' : 'border-gray-300 dark:border-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/50 focus:bg-white dark:focus:bg-gray-750'}`}
                   placeholder="you@example.com"
                 />
               </div>
@@ -241,7 +256,8 @@ export const Auth: React.FC<AuthProps> = ({ onLogin, onRegister, onBack, initial
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`w-full bg-gray-50 dark:bg-gray-800 border rounded-xl pl-12 pr-4 py-4 text-gray-900 dark:text-white focus:outline-none transition-all text-base ${fieldErrors.password ? 'border-red-500 focus:ring-2 focus:ring-red-500' : 'border-gray-300 dark:border-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/50 focus:bg-white dark:focus:bg-gray-750'}`}
+                  disabled={loading}
+                  className={`w-full bg-gray-50 dark:bg-gray-800 border rounded-xl pl-12 pr-4 py-3 sm:py-4 text-gray-900 dark:text-white focus:outline-none transition-all text-base disabled:opacity-50 ${fieldErrors.password ? 'border-red-500 focus:ring-2 focus:ring-red-500' : 'border-gray-300 dark:border-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/50 focus:bg-white dark:focus:bg-gray-750'}`}
                   placeholder="Minimum 6 characters"
                 />
               </div>
@@ -272,7 +288,7 @@ export const Auth: React.FC<AuthProps> = ({ onLogin, onRegister, onBack, initial
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center items-center gap-2 py-4 px-4 border border-transparent rounded-xl shadow-2xl text-base font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-4 focus:ring-indigo-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-95"
+              className="w-full flex justify-center items-center gap-2 py-3 sm:py-4 px-4 border border-transparent rounded-xl shadow-2xl text-base font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-4 focus:ring-indigo-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-95"
             >
               {loading ? (
                 <>
@@ -291,7 +307,7 @@ export const Auth: React.FC<AuthProps> = ({ onLogin, onRegister, onBack, initial
           </form>
 
           {/* Divider */}
-          <div className="relative my-8">
+          <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300 dark:border-gray-700"></div>
             </div>
@@ -302,40 +318,25 @@ export const Auth: React.FC<AuthProps> = ({ onLogin, onRegister, onBack, initial
             </div>
           </div>
 
-          {/* Social Login Buttons (Visual Only) */}
-          <div className="grid grid-cols-3 gap-3">
-            <button
-              type="button"
-              className="flex items-center justify-center py-3 px-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all hover:border-gray-300 dark:hover:border-gray-600 transform hover:scale-105"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24">
-                <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-              </svg>
-            </button>
-            <button
-              type="button"
-              className="flex items-center justify-center py-3 px-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all hover:border-gray-300 dark:hover:border-gray-600 transform hover:scale-105"
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-              </svg>
-            </button>
-            <button
-              type="button"
-              className="flex items-center justify-center py-3 px-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all hover:border-gray-300 dark:hover:border-gray-600 transform hover:scale-105"
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M23.954 4.569c-.885.389-1.83.654-2.825.775 1.014-.611 1.794-1.574 2.163-2.723-.951.555-2.005.959-3.127 1.184-.896-.959-2.173-1.559-3.591-1.559-2.717 0-4.92 2.203-4.92 4.917 0 .39.045.765.127 1.124C7.691 8.094 4.066 6.13 1.64 3.161c-.427.722-.666 1.561-.666 2.475 0 1.71.87 3.213 2.188 4.096-.807-.026-1.566-.248-2.228-.616v.061c0 2.385 1.693 4.374 3.946 4.827-.413.111-.849.171-1.296.171-.314 0-.615-.03-.916-.086.631 1.953 2.445 3.377 4.604 3.417-1.68 1.319-3.809 2.105-6.102 2.105-.39 0-.779-.023-1.17-.067 2.189 1.394 4.768 2.209 7.557 2.209 9.054 0 13.999-7.496 13.999-13.986 0-.209 0-.42-.015-.63.961-.689 1.8-1.56 2.46-2.548l-.047-.02z"/>
-              </svg>
-            </button>
-          </div>
+          {/* Google Login Button */}
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all hover:border-gray-300 dark:hover:border-gray-600 transform hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            <span>Continue with Google</span>
+          </button>
 
           {/* Toggle Login/Signup */}
-          <div className="mt-8 text-center">
-            <p className="text-base text-gray-600 dark:text-gray-400">
+          <div className="mt-6 text-center">
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
               {isLogin ? "Don't have an account? " : "Already have an account? "}
               <button
                 onClick={() => {
@@ -354,7 +355,7 @@ export const Auth: React.FC<AuthProps> = ({ onLogin, onRegister, onBack, initial
           </div>
 
           {/* Trust Indicators */}
-          <div className="mt-8 flex items-center justify-center gap-6 text-xs text-gray-500 dark:text-gray-400">
+          <div className="mt-6 flex items-center justify-center gap-4 sm:gap-6 text-xs text-gray-500 dark:text-gray-400 flex-wrap">
             <div className="flex items-center gap-1">
               <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
