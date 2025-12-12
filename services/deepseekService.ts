@@ -1,6 +1,6 @@
 import { Platform } from '../types';
 
-const DEEPSEEK_API_KEY = 'sk-01cb9d992e534c868236b6ab13734d19';
+const DEEPSEEK_API_KEY = 'sk-994ecb0dcae040d597ae4d9fb8266153';
 const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions';
 
 // Helper function to call DeepSeek API with retry logic

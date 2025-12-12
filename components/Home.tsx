@@ -29,7 +29,7 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
 
   const faqs = [
     { q: "Is it free to use?", a: "Yes, we offer a free tier with daily credits. You can upgrade for unlimited access." },
-    { q: "How does the AI work?", a: "We use Google's advanced Gemini models to analyze trends and generate context-aware content." },
+    { q: "How does the AI work?", a: "We use DeepSeek's advanced AI models to analyze trends and generate context-aware content." },
     { q: "Can I use it for business?", a: "Absolutely! Our tools are designed for creators, businesses, and agencies." },
     { q: "Do you support multiple languages?", a: "Yes, we support over 15 languages including English, Spanish, Hindi, and more." }
   ];
@@ -382,7 +382,7 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
             </span>
-            Powered by Google Gemini AI
+            Powered by DeepSeek AI
           </div>
 
           <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight">
