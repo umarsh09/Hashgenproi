@@ -1,9 +1,9 @@
 import { Platform } from '../types';
 
-const DEEPSEEK_API_KEY = 'sk-476277ef8d7344c2992e2252b0cad95a';
-const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions';
+// Use Vercel serverless function as proxy to avoid CORS issues and secure API key
+const API_PROXY_URL = '/api/deepseek';
 
-// Helper function to call DeepSeek API with retry logic
+// Helper function to call DeepSeek API via proxy with retry logic
 const callDeepSeekAPI = async (
   systemPrompt: string,
   userPrompt: string,
@@ -20,15 +20,13 @@ const callDeepSeekAPI = async (
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
-      const response = await fetch(DEEPSEEK_API_URL, {
+      const response = await fetch(API_PROXY_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          model: 'deepseek-chat',
           messages: [
             {
               role: 'system',
@@ -40,9 +38,8 @@ const callDeepSeekAPI = async (
             }
           ],
           temperature: temperature,
-          max_tokens: 2000,
-          stream: false,
-          ...(jsonMode && { response_format: { type: 'json_object' } })
+          maxTokens: 2000,
+          jsonMode: jsonMode
         }),
         signal: controller.signal
       });
@@ -51,7 +48,7 @@ const callDeepSeekAPI = async (
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-        console.error('DeepSeek API Error:', errorData);
+        console.error('DeepSeek Proxy Error:', errorData);
 
         // If rate limited or server error, retry
         if (response.status === 429 || response.status >= 500) {
@@ -60,11 +57,11 @@ const callDeepSeekAPI = async (
             continue;
           }
         }
-        throw new Error(`API Error: ${response.status} - ${errorData.error?.message || 'Request failed'}`);
+        throw new Error(`API Error: ${response.status} - ${errorData.error || 'Request failed'}`);
       }
 
       const data = await response.json();
-      const content = data.choices?.[0]?.message?.content || '';
+      const content = data.content || '';
 
       if (!content) {
         throw new Error('Empty response from API');

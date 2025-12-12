@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DeepSeek API Test</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        button { background: #4F46E5; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #4338CA; }
+        button:disabled { background: #9CA3AF; cursor: not-allowed; }
+        #result { margin-top: 20px; padding: 15px; background: #F3F4F6; border-radius: 8px; white-space: pre-wrap; font-family: monospace; font-size: 12px; }
+        .success { background: #D1FAE5; color: #065F46; }
+        .error { background: #FEE2E2; color: #991B1B; }
+        h1 { color: #1F2937; }
+        .info { color: #6B7280; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔑 DeepSeek API Key Test</h1>
+        <p class="info">Click the button below to test if the DeepSeek API key is working correctly.</p>
+        <button onclick="testAPI()" id="testBtn">🚀 Test API Key</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const API_KEY = 'sk-476277ef8d7344c2992e2252b0cad95a';
+        const API_URL = 'https://api.deepseek.com/v1/chat/completions';
+
+        async function testAPI() {
+            const btn = document.getElementById('testBtn');
+            const resultDiv = document.getElementById('result');
+
+            btn.disabled = true;
+            btn.textContent = '⏳ Testing...';
+            resultDiv.textContent = 'Sending request to DeepSeek API...\n';
+            resultDiv.className = '';
+
+            try {
+                console.log('Testing DeepSeek API...');
+
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: 'deepseek-chat',
+                        messages: [
+                            {
+                                role: 'system',
+                                content: 'You are a helpful assistant.'
+                            },
+                            {
+                                role: 'user',
+                                content: 'Say "API key is working!" in one sentence.'
+                            }
+                        ],
+                        temperature: 0.7,
+                        max_tokens: 50
+                    })
+                });
+
+                console.log('Response status:', response.status);
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+                    throw new Error(`API Error ${response.status}: ${JSON.stringify(errorData, null, 2)}`);
+                }
+
+                const data = await response.json();
+                const message = data.choices?.[0]?.message?.content || 'No response';
+
+                resultDiv.className = 'success';
+                resultDiv.textContent = '✅ SUCCESS!\n\n' +
+                    `API Response: ${message}\n\n` +
+                    `Full Response:\n${JSON.stringify(data, null, 2)}`;
+
+            } catch (error) {
+                console.error('API Test Error:', error);
+                resultDiv.className = 'error';
+                resultDiv.textContent = '❌ FAILED!\n\n' +
+                    `Error: ${error.message}\n\n` +
+                    `This could mean:\n` +
+                    `1. API key is invalid or expired\n` +
+                    `2. CORS is blocking the request\n` +
+                    `3. Network/firewall issue\n` +
+                    `4. DeepSeek API is down\n\n` +
+                    `Check browser console for more details.`;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🔄 Test Again';
+            }
+        }
+    </script>
+</body>
+</html>
