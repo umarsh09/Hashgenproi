@@ -90,8 +90,8 @@ export const Generator: React.FC<GeneratorProps> = ({ onGenerate, onBack }) => {
 
       <div className="flex items-center justify-between">
          <div className="text-center md:text-left">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Hashtag Generator</h2>
-            <p className="text-gray-500 dark:text-gray-400 mt-2">Select a platform and describe your content to go viral.</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Hashtag Generator</h2>
+            <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 mt-2">Select a platform and describe your content to go viral.</p>
          </div>
       </div>
 
@@ -159,13 +159,13 @@ export const Generator: React.FC<GeneratorProps> = ({ onGenerate, onBack }) => {
                     </div>
                 </div>
                 
-                <div className="flex justify-end mt-2">
+                <div className="flex justify-stretch sm:justify-end mt-2">
                     <button
                         onClick={handleGenerate}
                         disabled={isLoading}
                         title="Generate Hashtags"
                         className={`
-                        px-8 py-4 rounded-xl font-bold text-white transition-all transform flex items-center justify-center gap-3 min-w-[200px] shadow-lg
+                        w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold text-sm sm:text-base text-white transition-all transform flex items-center justify-center gap-2 shadow-lg
                         ${isLoading
                             ? 'bg-gray-400 dark:bg-gray-700 cursor-not-allowed opacity-80'
                             : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 hover:shadow-indigo-500/25 hover:-translate-y-0.5 active:scale-95'}
@@ -173,12 +173,12 @@ export const Generator: React.FC<GeneratorProps> = ({ onGenerate, onBack }) => {
                     >
                         {isLoading ? (
                             <>
-                                <div className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                <div className="w-4 h-4 sm:w-5 sm:h-5 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
                                 <span>Generating...</span>
                             </>
                         ) : (
                             <>
-                                <span className="text-xl">🚀</span>
+                                <span className="text-lg sm:text-xl">🚀</span>
                                 <span>Generate</span>
                             </>
                         )}

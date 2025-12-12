@@ -74,13 +74,13 @@ export const Analyzer: React.FC<AnalyzerProps> = ({ type, onGenerate, onBack }) 
       </button>
 
       <div className="flex items-center justify-between mb-2">
-         <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-xl flex items-center justify-center text-2xl">
+         <div className="flex items-center gap-3 sm:gap-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-orange-100 dark:bg-orange-900/30 rounded-xl flex items-center justify-center text-xl sm:text-2xl flex-shrink-0">
                 {icon}
             </div>
-            <div>
-                <h2 className="text-3xl font-bold text-gray-900 dark:text-white">{title}</h2>
-                <p className="text-gray-500 dark:text-gray-400">{desc}</p>
+            <div className="min-w-0 flex-1">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white truncate">{title}</h2>
+                <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 truncate">{desc}</p>
             </div>
          </div>
       </div>
@@ -112,18 +112,18 @@ export const Analyzer: React.FC<AnalyzerProps> = ({ type, onGenerate, onBack }) 
          <button
             onClick={handleAnalyze}
             disabled={isLoading}
-            className={`w-full py-4 rounded-xl font-bold text-white transition-all flex items-center justify-center gap-2 shadow-lg
+            className={`w-full py-3 sm:py-4 rounded-xl font-bold text-sm sm:text-base text-white transition-all flex items-center justify-center gap-2 shadow-lg
             ${isLoading ? 'bg-gray-400 dark:bg-gray-700 cursor-not-allowed' : 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-400 hover:to-red-400 transform active:scale-95'}
             `}
          >
            {isLoading ? (
              <>
-               <div className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
+               <div className="w-4 h-4 sm:w-5 sm:h-5 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
                <span>Analyzing...</span>
              </>
            ) : (
              <>
-               <span>🚀</span>
+               <span className="text-lg sm:text-xl">🚀</span>
                <span>Start {title}</span>
              </>
            )}
