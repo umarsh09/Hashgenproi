@@ -9,7 +9,8 @@ import {
   sendPasswordResetEmail,
   onAuthStateChanged
 } from 'firebase/auth';
-import { auth } from '../config/firebase';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { auth, db } from '../config/firebase';
 import { UserProfile } from '../types';
 
 // Convert Firebase User to UserProfile
@@ -22,6 +23,47 @@ export const convertFirebaseUser = (firebaseUser: User): UserProfile => {
     plan: 'free', // Default plan
     createdAt: firebaseUser.metadata.creationTime || new Date().toISOString()
   };
+};
+
+// Save user profile to Firestore
+const saveUserProfile = async (uid: string, profile: UserProfile): Promise<void> => {
+  try {
+    await setDoc(doc(db, 'users', uid), {
+      uid: profile.id,
+      fullName: profile.name,
+      email: profile.email,
+      avatar: profile.avatar,
+      plan: profile.plan,
+      createdAt: profile.createdAt
+    });
+  } catch (error: any) {
+    console.error('Error saving user profile:', error);
+    throw new Error('Failed to save user profile');
+  }
+};
+
+// Get user profile from Firestore
+export const getUserProfile = async (uid: string): Promise<UserProfile | null> => {
+  try {
+    const docRef = doc(db, 'users', uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      return {
+        id: data.uid,
+        name: data.fullName,
+        email: data.email,
+        avatar: data.avatar,
+        plan: data.plan,
+        createdAt: data.createdAt
+      };
+    }
+    return null;
+  } catch (error: any) {
+    console.error('Error getting user profile:', error);
+    return null;
+  }
 };
 
 // Register new user with email and password
@@ -40,8 +82,21 @@ export const registerUser = async (
       photoURL: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6366f1&color=fff&size=200`
     });
 
+    // Create user profile object
+    const userProfile: UserProfile = {
+      id: userCredential.user.uid,
+      name: name,
+      email: email,
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6366f1&color=fff&size=200`,
+      plan: 'free',
+      createdAt: new Date().toISOString()
+    };
+
+    // Save profile to Firestore
+    await saveUserProfile(userCredential.user.uid, userProfile);
+
     // Return user profile
-    return convertFirebaseUser(userCredential.user);
+    return userProfile;
   } catch (error: any) {
     console.error('Registration error:', error);
     throw new Error(getAuthErrorMessage(error.code));
@@ -67,7 +122,25 @@ export const loginWithGoogle = async (): Promise<UserProfile> => {
   try {
     const provider = new GoogleAuthProvider();
     const userCredential = await signInWithPopup(auth, provider);
-    return convertFirebaseUser(userCredential.user);
+    const user = userCredential.user;
+
+    // Check if user profile exists in Firestore
+    let userProfile = await getUserProfile(user.uid);
+
+    // If not, create it (first time Google login)
+    if (!userProfile) {
+      userProfile = {
+        id: user.uid,
+        name: user.displayName || user.email?.split('@')[0] || 'User',
+        email: user.email || '',
+        avatar: user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || 'User')}&background=6366f1&color=fff&size=200`,
+        plan: 'free',
+        createdAt: new Date().toISOString()
+      };
+      await saveUserProfile(user.uid, userProfile);
+    }
+
+    return userProfile;
   } catch (error: any) {
     console.error('Google login error:', error);
     throw new Error(getAuthErrorMessage(error.code));

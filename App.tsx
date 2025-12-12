@@ -8,7 +8,7 @@ import { FigmaGenerator } from './components/FigmaGenerator';
 import { Analyzer } from './components/Analyzer';
 import { History } from './components/History';
 import { Home } from './components/Home';
-import { Auth } from './components/Auth';
+import { AuthNew as Auth } from './components/AuthNew';
 import { Pricing } from './components/Pricing';
 import { Settings } from './components/Settings';
 import { CustomToastProvider } from './components/CustomToast';
