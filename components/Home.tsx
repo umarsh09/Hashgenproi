@@ -385,30 +385,30 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
             Powered by DeepSeek AI
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight">
             Stop guessing. <br />
             Start <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 animate-pulse-glow">Going Viral.</span>
           </h1>
-          
-          <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            Generate context-aware hashtags, compelling bios, and captions in seconds. 
+
+          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            Generate context-aware hashtags, compelling bios, and captions in seconds.
             The only AI tool you need for social media growth.
           </p>
 
           <SocialIcons />
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-5 pt-8">
-            <button 
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
+            <button
               onClick={onStart}
-              className="w-full sm:w-auto px-8 py-4 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full font-bold text-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-all transform hover:scale-105 shadow-2xl hover:shadow-indigo-500/20"
+              className="w-full sm:w-auto px-10 py-4 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full font-bold text-base hover:bg-gray-800 dark:hover:bg-gray-200 transition-all transform hover:scale-105 shadow-2xl hover:shadow-indigo-500/20 flex items-center justify-center gap-2"
             >
-              Start for Free
+              <span>✨</span> Start for Free
             </button>
-            <button 
+            <button
               onClick={onPricing}
-              className="w-full sm:w-auto px-8 py-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-900 dark:text-white rounded-full font-bold text-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors shadow-lg"
+              className="w-full sm:w-auto px-10 py-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-900 dark:text-white rounded-full font-bold text-base border-2 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2"
             >
-              See Pricing
+              <span>💎</span> See Pricing
             </button>
           </div>
           

@@ -85,8 +85,8 @@ export const BioGenerator: React.FC<BioGeneratorProps> = ({ onGenerate, onBack }
 
       <div className="flex items-center justify-between mb-4">
         <div className="text-center md:text-left">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">AI Bio Writer</h2>
-            <p className="text-gray-500 dark:text-gray-400 mt-2">Create the perfect first impression for your profile.</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">AI Bio Writer</h2>
+            <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 mt-2">Create the perfect first impression for your profile.</p>
         </div>
       </div>
 
@@ -181,7 +181,7 @@ export const BioGenerator: React.FC<BioGeneratorProps> = ({ onGenerate, onBack }
             disabled={isLoading}
             title="Create Bio"
             className={`
-              w-full py-4 rounded-xl font-bold text-white transition-all transform flex items-center justify-center gap-2 shadow-lg
+              w-full py-3 sm:py-4 rounded-xl font-bold text-sm sm:text-base text-white transition-all transform flex items-center justify-center gap-2 shadow-lg
               ${isLoading
                 ? 'bg-gray-400 dark:bg-gray-700 cursor-not-allowed opacity-80'
                 : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 hover:shadow-purple-500/25 active:scale-95'}
@@ -189,12 +189,12 @@ export const BioGenerator: React.FC<BioGeneratorProps> = ({ onGenerate, onBack }
           >
             {isLoading ? (
               <>
-                <div className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
+                <div className="w-4 h-4 sm:w-5 sm:h-5 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
                 <span>Creating Bio...</span>
               </>
             ) : (
               <>
-                <span>✨</span>
+                <span className="text-lg sm:text-xl">✨</span>
                 <span>Generate Bio</span>
               </>
             )}
