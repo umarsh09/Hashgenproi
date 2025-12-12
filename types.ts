@@ -48,8 +48,10 @@ export interface GenerationResult {
 }
 
 export interface UserProfile {
+  id: string;
   name: string;
   email: string;
   avatar: string;
   plan: 'free' | 'pro' | 'business';
+  createdAt: string;
 }
