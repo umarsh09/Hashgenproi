@@ -38,6 +38,8 @@ export const History: React.FC<HistoryProps> = ({ history, onBack }) => {
     return acc;
   }, {} as Record<string, GenerationResult[]>);
 
+  const historyGroups = Object.entries(groupedHistory) as [string, GenerationResult[]][];
+
   if (history.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-[60vh] text-gray-500 animate-fade-in relative">
@@ -169,7 +171,7 @@ export const History: React.FC<HistoryProps> = ({ history, onBack }) => {
         </div>
       ) : (
         <div className="space-y-6">
-          {Object.entries(groupedHistory).map(([date, items]) => (
+          {historyGroups.map(([date, items]) => (
             <div key={date}>
               <div className="flex items-center gap-3 mb-3">
                 <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{date}</h3>
