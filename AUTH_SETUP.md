@@ -56,7 +56,7 @@ This project includes a **production-ready authentication system** powered by Fi
 
 ```
 ├── components/
-│   ├── AuthNew.tsx           # Complete auth UI (Login + Register)
+│   ├── Auth.tsx              # Complete auth UI (Login + Register)
 │   ├── Input.tsx             # Reusable input with validation
 │   ├── Button.tsx            # Reusable button with variants
 │   └── ProtectedRoute.tsx    # Route protection HOC
@@ -346,7 +346,7 @@ Real-time validation with clear error messages:
 
 ### Change Theme Colors
 
-Edit Tailwind classes in `AuthNew.tsx`:
+Edit Tailwind classes in `Auth.tsx`:
 
 ```typescript
 // Current: Indigo/Purple gradient

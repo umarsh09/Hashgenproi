@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { registerUser, loginUser, loginWithGoogle, resetPassword, resendVerificationEmail } from '../services/authService';
+import { registerUser, loginUser, loginWithGoogle, resetPassword, resendVerificationEmail, reloadUser, LoginResult } from '../services/authService';
 import { UserProfile } from '../types';
 
 interface AuthProps {
@@ -12,13 +12,27 @@ export const Auth: React.FC<AuthProps> = ({ onSuccess, onBack, initialMode = 'lo
   const [mode, setMode] = useState<'login' | 'signup' | 'forgot' | 'verify-email'>(initialMode);
   const [loading, setLoading] = useState(false);
 
-  // Form State
+  // Form State - Load saved email from localStorage if Remember Me was checked
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(() => {
+    try {
+      const savedEmail = localStorage.getItem('userEmail');
+      const wasRemembered = localStorage.getItem('rememberMe') === 'true';
+      return wasRemembered && savedEmail ? savedEmail : '';
+    } catch {
+      return '';
+    }
+  });
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
+  const [rememberMe, setRememberMe] = useState(() => {
+    try {
+      return localStorage.getItem('rememberMe') === 'true';
+    } catch {
+      return false;
+    }
+  });
 
   // Messages
   const [error, setError] = useState('');
@@ -73,11 +87,26 @@ export const Auth: React.FC<AuthProps> = ({ onSuccess, onBack, initialMode = 'lo
       let user: UserProfile;
 
       if (mode === 'login') {
-        user = await loginUser(email, password);
+        const loginResult: LoginResult = await loginUser(email, password);
+        user = loginResult.user;
+
+        // Handle Remember Me - save or clear based on checkbox
         if (rememberMe) {
           localStorage.setItem('userEmail', email);
+          localStorage.setItem('rememberMe', 'true');
+        } else {
+          localStorage.removeItem('userEmail');
+          localStorage.removeItem('rememberMe');
         }
-        onSuccess(user);
+
+        // Check if email is verified
+        if (!loginResult.emailVerified) {
+          setRegisteredUser(user);
+          setSuccess('⚠️ Your email is not verified. Please verify to access all features.');
+          setMode('verify-email');
+        } else {
+          onSuccess(user);
+        }
       } else {
         // Signup mode
         user = await registerUser(email, password, name);
@@ -100,6 +129,27 @@ export const Auth: React.FC<AuthProps> = ({ onSuccess, onBack, initialMode = 'lo
     try {
       await resendVerificationEmail();
       setSuccess('✅ Verification email sent! Please check your inbox.');
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCheckVerification = async () => {
+    setLoading(true);
+    setError('');
+    setSuccess('');
+    try {
+      const isVerified = await reloadUser();
+      if (isVerified && registeredUser) {
+        setSuccess('✅ Email verified successfully! Redirecting...');
+        setTimeout(() => {
+          onSuccess(registeredUser);
+        }, 1000);
+      } else {
+        setError('Email not verified yet. Please check your inbox and click the verification link.');
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -172,10 +222,21 @@ export const Auth: React.FC<AuthProps> = ({ onSuccess, onBack, initialMode = 'lo
             {/* Action Buttons */}
             <div className="space-y-3">
               <button
-                onClick={handleContinueWithoutVerification}
-                className="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                onClick={handleCheckVerification}
+                disabled={loading}
+                className="w-full py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg font-semibold hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
               >
-                Continue to App →
+                {loading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    <span>Checking...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>✓</span>
+                    <span>I've Verified - Check Status</span>
+                  </>
+                )}
               </button>
 
               <button
@@ -184,6 +245,13 @@ export const Auth: React.FC<AuthProps> = ({ onSuccess, onBack, initialMode = 'lo
                 className="w-full py-2.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 transition-all"
               >
                 {loading ? 'Sending...' : '↻ Resend Verification Email'}
+              </button>
+
+              <button
+                onClick={handleContinueWithoutVerification}
+                className="w-full py-2.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-all text-sm"
+              >
+                Skip for now (limited features) →
               </button>
 
               <button

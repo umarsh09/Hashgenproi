@@ -12,8 +12,8 @@ import { Auth } from './components/Auth';
 import { Pricing } from './components/Pricing';
 import { Settings } from './components/Settings';
 import { CustomToastProvider } from './components/CustomToast';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { View, GenerationResult, UserProfile } from './types';
-import { onAuthStateChange, logoutUser } from './services/authService';
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -151,8 +151,9 @@ const SplashLoader = () => (
 
 // Main App Container
 const AppContainer: React.FC = () => {
+  const { user, loading: authLoading, logout } = useAuth();
   const [currentView, setCurrentView] = useState<View>(View.HOME);
-  
+
   // Persistent History
   const [history, setHistory] = useState<GenerationResult[]>(() => {
     try {
@@ -168,20 +169,16 @@ const AppContainer: React.FC = () => {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [loadingApp, setLoadingApp] = useState(true);
 
-  // User State - managed by Firebase
-  const [user, setUser] = useState<UserProfile | null>(null);
+  // Local user state for profile updates (synced with AuthContext)
+  const [localUser, setLocalUser] = useState<UserProfile | null>(null);
 
-  // Firebase Auth State Listener
+  // Sync local user with auth context
   useEffect(() => {
-    const unsubscribe = onAuthStateChange((firebaseUser) => {
-      setUser(firebaseUser);
-      if (!firebaseUser && currentView !== View.HOME) {
-        setCurrentView(View.HOME);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
+    setLocalUser(user);
+    if (!user && currentView !== View.HOME && currentView !== View.AUTH && currentView !== View.PRICING) {
+      setCurrentView(View.HOME);
+    }
+  }, [user]);
 
   // Initial App Load Simulation
   useEffect(() => {
@@ -209,16 +206,16 @@ const AppContainer: React.FC = () => {
 
   const toggleTheme = () => setIsDarkMode(!isDarkMode);
 
-  // AUTHENTICATION LOGIC - Firebase
+  // AUTHENTICATION LOGIC - Firebase with AuthContext
   const handleAuthSuccess = (authenticatedUser: UserProfile) => {
-    setUser(authenticatedUser);
+    setLocalUser(authenticatedUser);
     setCurrentView(View.HOME);
   };
 
   const handleLogout = async () => {
     try {
-      await logoutUser();
-      setUser(null);
+      await logout();
+      setLocalUser(null);
       setCurrentView(View.HOME);
       setSidebarOpen(false);
     } catch (error) {
@@ -227,7 +224,7 @@ const AppContainer: React.FC = () => {
   };
 
   const updateUserProfile = (updatedUser: UserProfile) => {
-    setUser(updatedUser);
+    setLocalUser(updatedUser);
     // Note: Firebase profile updates are handled in Settings component
   };
 
@@ -239,7 +236,7 @@ const AppContainer: React.FC = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  const isAppMode = !!user && 
+  const isAppMode = !!localUser &&
     currentView !== View.AUTH &&
     currentView !== View.PRICING;
 
@@ -250,19 +247,19 @@ const AppContainer: React.FC = () => {
     switch (currentView) {
       case View.HOME:
         return (
-          <Home 
-            user={user}
+          <Home
+            user={localUser}
             history={history}
-            onStart={() => setCurrentView(user ? View.GENERATOR_HASHTAG : View.AUTH)} 
+            onStart={() => setCurrentView(localUser ? View.GENERATOR_HASHTAG : View.AUTH)}
             onPricing={() => setCurrentView(View.PRICING)}
-            isDashboard={isAppMode} 
+            isDashboard={isAppMode}
             onNavigate={setCurrentView}
           />
         );
       case View.AUTH:
         return <Auth onSuccess={handleAuthSuccess} onBack={backToDashboard} />;
       case View.PRICING:
-        return <Pricing onSelectPlan={() => setCurrentView(user ? View.GENERATOR_HASHTAG : View.AUTH)} onBack={backToDashboard} isLoggedIn={!!user} />;
+        return <Pricing onSelectPlan={() => setCurrentView(localUser ? View.GENERATOR_HASHTAG : View.AUTH)} onBack={backToDashboard} isLoggedIn={!!localUser} />;
       case View.GENERATOR_HASHTAG:
         return <Generator onGenerate={addToHistory} onBack={backToDashboard} />;
       case View.GENERATOR_BIO:
@@ -270,7 +267,7 @@ const AppContainer: React.FC = () => {
       case View.HISTORY:
         return <History history={history} onBack={backToDashboard} />;
       case View.SETTINGS:
-        return <Settings user={user!} onUpdateUser={updateUserProfile} isDarkMode={isDarkMode} toggleTheme={toggleTheme} onBack={backToDashboard} />;
+        return <Settings user={localUser!} onUpdateUser={updateUserProfile} isDarkMode={isDarkMode} toggleTheme={toggleTheme} onBack={backToDashboard} />;
       
       // New Tools
       case View.GENERATOR_CAPTION:
@@ -296,11 +293,12 @@ const AppContainer: React.FC = () => {
         return <Analyzer type="audit" onGenerate={addToHistory} onBack={backToDashboard} />;
         
       default:
-        return <Home user={user} history={history} onStart={() => setCurrentView(View.AUTH)} onPricing={() => setCurrentView(View.PRICING)} isDashboard={isAppMode} onNavigate={setCurrentView} />;
+        return <Home user={localUser} history={history} onStart={() => setCurrentView(View.AUTH)} onPricing={() => setCurrentView(View.PRICING)} isDashboard={isAppMode} onNavigate={setCurrentView} />;
     }
   };
 
-  if (loadingApp) {
+  // Show splash loader during initial load or auth check
+  if (loadingApp || authLoading) {
     return <SplashLoader />;
   }
 
@@ -316,10 +314,10 @@ const AppContainer: React.FC = () => {
             onClose={() => setSidebarOpen(false)}
           />
           <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative bg-gray-50 dark:bg-gray-900">
-            <Navbar 
-              user={user} 
-              isAppMode={true} 
-              onViewChange={setCurrentView} 
+            <Navbar
+              user={localUser}
+              isAppMode={true}
+              onViewChange={setCurrentView}
               onLogout={handleLogout}
               toggleSidebar={toggleSidebar}
               isDarkMode={isDarkMode}
@@ -335,11 +333,11 @@ const AppContainer: React.FC = () => {
       ) : (
         <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
           {currentView !== View.AUTH && (
-            <Navbar 
-              user={user} 
-              isAppMode={false} 
-              onViewChange={setCurrentView} 
-              onLogout={handleLogout} 
+            <Navbar
+              user={localUser}
+              isAppMode={false}
+              onViewChange={setCurrentView}
+              onLogout={handleLogout}
               toggleSidebar={() => {}}
               isDarkMode={isDarkMode}
               toggleTheme={toggleTheme}
@@ -356,9 +354,11 @@ const AppContainer: React.FC = () => {
 
 const App: React.FC = () => (
   <ErrorBoundary>
-    <CustomToastProvider>
-      <AppContainer />
-    </CustomToastProvider>
+    <AuthProvider>
+      <CustomToastProvider>
+        <AppContainer />
+      </CustomToastProvider>
+    </AuthProvider>
   </ErrorBoundary>
 );
 
