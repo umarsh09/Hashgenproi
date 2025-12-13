@@ -400,15 +400,17 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
             <button
               onClick={onStart}
+              aria-label="Start using HashGenPro for free"
               className="w-full sm:w-auto px-10 py-4 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full font-bold text-base hover:bg-gray-800 dark:hover:bg-gray-200 transition-all transform hover:scale-105 shadow-2xl hover:shadow-indigo-500/20 flex items-center justify-center gap-2"
             >
-              <span>✨</span> Start for Free
+              <span aria-hidden="true">✨</span> Start for Free
             </button>
             <button
               onClick={onPricing}
+              aria-label="View pricing plans"
               className="w-full sm:w-auto px-10 py-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-900 dark:text-white rounded-full font-bold text-base border-2 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2"
             >
-              <span>💎</span> See Pricing
+              <span aria-hidden="true">💎</span> See Pricing
             </button>
           </div>
           
@@ -535,12 +537,20 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
             ))}
           </div>
           <div className="pt-8 border-t border-gray-100 dark:border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4">
-             <p className="text-gray-400 text-sm">© 2024 HashGenPro AI. All rights reserved.</p>
+             <p className="text-gray-400 text-sm">© {new Date().getFullYear()} HashGenPro AI. All rights reserved.</p>
              <div className="flex gap-4">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/X_icon_2.svg" className="w-6 h-6 opacity-60 hover:opacity-100 cursor-pointer" alt="X" />
-                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" className="w-6 h-6 opacity-60 hover:opacity-100 cursor-pointer" alt="Instagram" />
-                <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" className="w-6 h-6 opacity-60 hover:opacity-100 cursor-pointer" alt="LinkedIn" />
-                 <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" className="w-6 h-6 opacity-60 hover:opacity-100 cursor-pointer" alt="Facebook" />
+                <a href="#" aria-label="Follow us on X (Twitter)" className="focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/X_icon_2.svg" className="w-6 h-6 opacity-60 hover:opacity-100 cursor-pointer transition-opacity" alt="X (Twitter)" />
+                </a>
+                <a href="#" aria-label="Follow us on Instagram" className="focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" className="w-6 h-6 opacity-60 hover:opacity-100 cursor-pointer transition-opacity" alt="Instagram" />
+                </a>
+                <a href="#" aria-label="Follow us on LinkedIn" className="focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" className="w-6 h-6 opacity-60 hover:opacity-100 cursor-pointer transition-opacity" alt="LinkedIn" />
+                </a>
+                <a href="#" aria-label="Follow us on Facebook" className="focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" className="w-6 h-6 opacity-60 hover:opacity-100 cursor-pointer transition-opacity" alt="Facebook" />
+                </a>
              </div>
           </div>
         </div>

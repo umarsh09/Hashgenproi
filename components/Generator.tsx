@@ -68,7 +68,7 @@ export const Generator: React.FC<GeneratorProps> = ({ onGenerate, onBack }) => {
                 <div className="w-8 h-8 bg-indigo-600 rounded-full loader-core"></div>
             </div>
         </div>
-        <p className="text-lg font-bold text-gray-800 dark:text-white animate-pulse">Analysing Trends...</p>
+        <p className="text-lg font-bold text-gray-800 dark:text-white animate-pulse">Analyzing Trends...</p>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Connecting to AI Neural Network</p>
     </div>
   );
