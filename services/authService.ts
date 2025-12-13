@@ -74,13 +74,16 @@ export const registerUser = async (
   name: string
 ): Promise<UserProfile> => {
   try {
+    const normalizedEmail = email.trim();
+    const trimmedName = name.trim();
+
     // Create user account
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const userCredential = await createUserWithEmailAndPassword(auth, normalizedEmail, password.trim());
 
     // Update profile with display name
     await updateProfile(userCredential.user, {
-      displayName: name,
-      photoURL: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6366f1&color=fff&size=200`
+      displayName: trimmedName,
+      photoURL: `https://ui-avatars.com/api/?name=${encodeURIComponent(trimmedName)}&background=6366f1&color=fff&size=200`
     });
 
     // Send email verification
@@ -98,9 +101,9 @@ export const registerUser = async (
     // Create user profile object
     const userProfile: UserProfile = {
       id: userCredential.user.uid,
-      name: name,
-      email: email,
-      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6366f1&color=fff&size=200`,
+      name: trimmedName,
+      email: normalizedEmail,
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(trimmedName)}&background=6366f1&color=fff&size=200`,
       plan: 'free',
       createdAt: new Date().toISOString()
     };
@@ -122,7 +125,7 @@ export const loginUser = async (
   password: string
 ): Promise<UserProfile> => {
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const userCredential = await signInWithEmailAndPassword(auth, email.trim(), password.trim());
     return convertFirebaseUser(userCredential.user);
   } catch (error: any) {
     console.error('Login error:', error);
@@ -173,7 +176,7 @@ export const logoutUser = async (): Promise<void> => {
 // Send password reset email
 export const resetPassword = async (email: string): Promise<void> => {
   try {
-    await sendPasswordResetEmail(auth, email);
+    await sendPasswordResetEmail(auth, email.trim());
   } catch (error: any) {
     console.error('Password reset error:', error);
     throw new Error(getAuthErrorMessage(error.code));
