@@ -7,6 +7,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   sendPasswordResetEmail,
+  sendEmailVerification,
   onAuthStateChanged
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
@@ -81,6 +82,18 @@ export const registerUser = async (
       displayName: name,
       photoURL: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6366f1&color=fff&size=200`
     });
+
+    // Send email verification
+    try {
+      await sendEmailVerification(userCredential.user, {
+        url: window.location.origin,
+        handleCodeInApp: false
+      });
+      console.log('✅ Verification email sent successfully');
+    } catch (verificationError) {
+      console.error('Failed to send verification email:', verificationError);
+      // Don't throw - allow user to continue even if verification email fails
+    }
 
     // Create user profile object
     const userProfile: UserProfile = {
@@ -164,6 +177,49 @@ export const resetPassword = async (email: string): Promise<void> => {
   } catch (error: any) {
     console.error('Password reset error:', error);
     throw new Error(getAuthErrorMessage(error.code));
+  }
+};
+
+// Resend verification email
+export const resendVerificationEmail = async (): Promise<void> => {
+  try {
+    const user = auth.currentUser;
+    if (!user) {
+      throw new Error('No user is currently signed in');
+    }
+
+    if (user.emailVerified) {
+      throw new Error('Email is already verified');
+    }
+
+    await sendEmailVerification(user, {
+      url: window.location.origin,
+      handleCodeInApp: false
+    });
+  } catch (error: any) {
+    console.error('Resend verification error:', error);
+    throw new Error(getAuthErrorMessage(error.code));
+  }
+};
+
+// Check if current user's email is verified
+export const isEmailVerified = (): boolean => {
+  const user = auth.currentUser;
+  return user ? user.emailVerified : false;
+};
+
+// Reload user to get updated verification status
+export const reloadUser = async (): Promise<boolean> => {
+  try {
+    const user = auth.currentUser;
+    if (user) {
+      await user.reload();
+      return user.emailVerified;
+    }
+    return false;
+  } catch (error: any) {
+    console.error('Reload user error:', error);
+    return false;
   }
 };
 
