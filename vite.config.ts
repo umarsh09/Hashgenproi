@@ -10,7 +10,7 @@ export default defineConfig(() => {
       },
       plugins: [react()],
       define: {
-        // DeepSeek API key is configured directly in the service
+        // DeepSeek API key is provided via environment variable on the serverless proxy
       },
       resolve: {
         alias: {
