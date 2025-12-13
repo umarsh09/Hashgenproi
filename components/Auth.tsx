@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { registerUser, loginUser, loginWithGoogle, resetPassword, resendVerificationEmail } from '../services/authService';
 import { UserProfile } from '../types';
 
@@ -27,13 +27,31 @@ export const Auth: React.FC<AuthProps> = ({ onSuccess, onBack, initialMode = 'lo
   // Store registered user temporarily
   const [registeredUser, setRegisteredUser] = useState<UserProfile | null>(null);
 
+  useEffect(() => {
+    const storedEmail = localStorage.getItem('userEmail');
+    if (storedEmail) {
+      setEmail(storedEmail);
+      setRememberMe(true);
+    }
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccess('');
 
+    const normalizedEmail = email.trim();
+    const normalizedPassword = password.trim();
+    const normalizedConfirmPassword = confirmPassword.trim();
+    const normalizedName = name.trim();
+
+    setEmail(normalizedEmail);
+    setPassword(normalizedPassword);
+    setConfirmPassword(normalizedConfirmPassword);
+    setName(normalizedName);
+
     // Validation
-    if (!email.includes('@')) {
+    if (!normalizedEmail.includes('@')) {
       setError('Please enter a valid email');
       return;
     }
@@ -41,7 +59,7 @@ export const Auth: React.FC<AuthProps> = ({ onSuccess, onBack, initialMode = 'lo
     if (mode === 'forgot') {
       setLoading(true);
       try {
-        await resetPassword(email);
+        await resetPassword(normalizedEmail);
         setSuccess('Password reset email sent! Check your inbox.');
         setTimeout(() => setMode('login'), 2000);
       } catch (err: any) {
@@ -52,17 +70,17 @@ export const Auth: React.FC<AuthProps> = ({ onSuccess, onBack, initialMode = 'lo
       return;
     }
 
-    if (password.length < 6) {
+    if (normalizedPassword.length < 6) {
       setError('Password must be at least 6 characters');
       return;
     }
 
     if (mode === 'signup') {
-      if (!name.trim()) {
+      if (!normalizedName) {
         setError('Please enter your name');
         return;
       }
-      if (password !== confirmPassword) {
+      if (normalizedPassword !== normalizedConfirmPassword) {
         setError('Passwords do not match');
         return;
       }
@@ -73,14 +91,14 @@ export const Auth: React.FC<AuthProps> = ({ onSuccess, onBack, initialMode = 'lo
       let user: UserProfile;
 
       if (mode === 'login') {
-        user = await loginUser(email, password);
+        user = await loginUser(normalizedEmail, normalizedPassword);
         if (rememberMe) {
-          localStorage.setItem('userEmail', email);
+          localStorage.setItem('userEmail', normalizedEmail);
         }
         onSuccess(user);
       } else {
         // Signup mode
-        user = await registerUser(email, password, name);
+        user = await registerUser(normalizedEmail, normalizedPassword, normalizedName);
         setRegisteredUser(user);
         setSuccess('✅ Account created! Please check your email to verify your account.');
         setMode('verify-email');
