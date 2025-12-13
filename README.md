@@ -15,6 +15,6 @@ View your app in AI Studio: https://ai.studio/apps/drive/1cvekuo8evs_qjBkg7VI3pi
 
 1. Install dependencies:
    `npm install`
-2. The app uses DeepSeek AI (API key is preconfigured)
+2. The app uses DeepSeek AI. Set `DEEPSEEK_API_KEY` in your environment (e.g., `.env.local` or Vercel Project Settings).
 3. Run the app:
    `npm run dev`
