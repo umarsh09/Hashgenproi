@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { registerUser, loginUser, loginWithGoogle, resetPassword } from '../services/authService';
+import { registerUser, loginUser, loginWithGoogle, resetPassword, resendVerificationEmail } from '../services/authService';
 import { UserProfile } from '../types';
 
 interface AuthProps {
@@ -9,7 +9,7 @@ interface AuthProps {
 }
 
 export const Auth: React.FC<AuthProps> = ({ onSuccess, onBack, initialMode = 'login' }) => {
-  const [mode, setMode] = useState<'login' | 'signup' | 'forgot'>(initialMode);
+  const [mode, setMode] = useState<'login' | 'signup' | 'forgot' | 'verify-email'>(initialMode);
   const [loading, setLoading] = useState(false);
 
   // Form State
@@ -23,6 +23,9 @@ export const Auth: React.FC<AuthProps> = ({ onSuccess, onBack, initialMode = 'lo
   // Messages
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  // Store registered user temporarily
+  const [registeredUser, setRegisteredUser] = useState<UserProfile | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,15 +77,39 @@ export const Auth: React.FC<AuthProps> = ({ onSuccess, onBack, initialMode = 'lo
         if (rememberMe) {
           localStorage.setItem('userEmail', email);
         }
+        onSuccess(user);
       } else {
+        // Signup mode
         user = await registerUser(email, password, name);
+        setRegisteredUser(user);
+        setSuccess('✅ Account created! Please check your email to verify your account.');
+        setMode('verify-email');
+        // Don't call onSuccess yet - wait for email verification
       }
-
-      onSuccess(user);
     } catch (err: any) {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    setLoading(true);
+    setError('');
+    setSuccess('');
+    try {
+      await resendVerificationEmail();
+      setSuccess('✅ Verification email sent! Please check your inbox.');
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleContinueWithoutVerification = () => {
+    if (registeredUser) {
+      onSuccess(registeredUser);
     }
   };
 
@@ -99,12 +126,91 @@ export const Auth: React.FC<AuthProps> = ({ onSuccess, onBack, initialMode = 'lo
     }
   };
 
+  // Email Verification Screen
+  if (mode === 'verify-email') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-indigo-900 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 text-center">
+            {/* Email Icon */}
+            <div className="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+              <span className="text-5xl">📧</span>
+            </div>
+
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+              Verify Your Email
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
+              We've sent a verification link to <br />
+              <span className="font-semibold text-indigo-600 dark:text-indigo-400">{email}</span>
+            </p>
+
+            {/* Success Message */}
+            {success && (
+              <div className="mb-6 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-green-700 dark:text-green-300 text-sm">
+                {success}
+              </div>
+            )}
+
+            {/* Error Message */}
+            {error && (
+              <div className="mb-6 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-300 text-sm">
+                {error}
+              </div>
+            )}
+
+            {/* Instructions */}
+            <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4 mb-6 text-left">
+              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium mb-2">📌 Next Steps:</p>
+              <ol className="text-sm text-gray-600 dark:text-gray-400 space-y-2 ml-4 list-decimal">
+                <li>Check your email inbox</li>
+                <li>Click the verification link</li>
+                <li>Return here and continue</li>
+              </ol>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="space-y-3">
+              <button
+                onClick={handleContinueWithoutVerification}
+                className="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                Continue to App →
+              </button>
+
+              <button
+                onClick={handleResendVerification}
+                disabled={loading}
+                className="w-full py-2.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 transition-all"
+              >
+                {loading ? 'Sending...' : '↻ Resend Verification Email'}
+              </button>
+
+              <button
+                onClick={() => setMode('login')}
+                className="w-full py-2 text-sm text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+              >
+                ← Back to Login
+              </button>
+            </div>
+
+            {/* Help Text */}
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-6">
+              Didn't receive the email? Check your spam folder or click resend above.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-indigo-900 flex items-center justify-center p-4">
       {/* Back Button */}
       <button
         onClick={onBack}
-        className="fixed top-4 left-4 p-2 rounded-lg bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-all z-10"
+        aria-label="Go back to home"
+        className="fixed top-4 left-4 p-2 rounded-lg bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-all z-10 focus:outline-none focus:ring-2 focus:ring-indigo-500"
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -234,9 +340,29 @@ export const Auth: React.FC<AuthProps> = ({ onSuccess, onBack, initialMode = 'lo
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-medium hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2"
             >
-              {loading ? 'Please wait...' : mode === 'login' ? 'Sign In' : mode === 'signup' ? 'Create Account' : 'Send Reset Link'}
+              {loading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <span>Please wait...</span>
+                </>
+              ) : mode === 'login' ? (
+                <>
+                  <span>🚀</span>
+                  <span>Sign In</span>
+                </>
+              ) : mode === 'signup' ? (
+                <>
+                  <span>✨</span>
+                  <span>Create Account</span>
+                </>
+              ) : (
+                <>
+                  <span>📧</span>
+                  <span>Send Reset Link</span>
+                </>
+              )}
             </button>
           </form>
 
@@ -256,7 +382,8 @@ export const Auth: React.FC<AuthProps> = ({ onSuccess, onBack, initialMode = 'lo
                 type="button"
                 onClick={handleGoogleLogin}
                 disabled={loading}
-                className="w-full py-2.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                aria-label="Continue with Google"
+                className="w-full py-3 bg-white dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-600 hover:border-indigo-400 dark:hover:border-indigo-500 disabled:opacity-50 transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:scale-95"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
