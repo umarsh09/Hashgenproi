@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-const DEEPSEEK_API_KEY = 'sk-476277ef8d7344c2992e2252b0cad95a';
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions';
 
 export default async function handler(
@@ -25,6 +25,13 @@ export default async function handler(
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  const apiKey = DEEPSEEK_API_KEY;
+
+  if (!apiKey) {
+    console.error('DeepSeek API key is not configured');
+    return res.status(500).json({ error: 'Server configuration error: missing API key' });
+  }
+
   try {
     const { messages, temperature = 0.7, maxTokens = 2000, jsonMode = false } = req.body;
 
@@ -38,7 +45,7 @@ export default async function handler(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
+        'Authorization': `Bearer ${apiKey}`,
         'Accept': 'application/json'
       },
       body: JSON.stringify({
