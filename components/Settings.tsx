@@ -14,7 +14,7 @@ interface SettingsProps {
 export const Settings: React.FC<SettingsProps> = ({ user, onUpdateUser, onUpdatePassword, isDarkMode, toggleTheme, onBack }) => {
   const [activeTab, setActiveTab] = useState<'profile' | 'preferences' | 'security'>('profile');
   const [name, setName] = useState(user.name);
-  const [bio, setBio] = useState('Digital Creator using HashtagGenius');
+  const [bio, setBio] = useState('Digital Creator using HashGenPro');
   
   // Password State
   const [currentPassword, setCurrentPassword] = useState('');
