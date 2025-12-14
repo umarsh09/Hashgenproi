@@ -220,7 +220,15 @@ const AppContainer: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      await logoutUser();
+      const isGuest = localStorage.getItem('isGuestUser') === 'true';
+
+      if (!isGuest) {
+        await logoutUser();
+      }
+
+      // Clear guest flag
+      localStorage.removeItem('isGuestUser');
+
       setUser(null);
       setCurrentView(View.HOME);
       setSidebarOpen(false);
@@ -307,27 +315,48 @@ const AppContainer: React.FC = () => {
     return <SplashLoader />;
   }
 
+  const isGuestUser = localStorage.getItem('isGuestUser') === 'true';
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans selection:bg-indigo-500/30 transition-colors duration-300">
       {isAppMode ? (
         <div className="flex h-screen overflow-hidden">
-          <Sidebar 
-            currentView={currentView} 
-            onViewChange={(v) => { setCurrentView(v); setSidebarOpen(false); }} 
+          <Sidebar
+            currentView={currentView}
+            onViewChange={(v) => { setCurrentView(v); setSidebarOpen(false); }}
             onLogout={handleLogout}
             isOpen={sidebarOpen}
             onClose={() => setSidebarOpen(false)}
           />
           <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative bg-gray-50 dark:bg-gray-900">
-            <Navbar 
-              user={user} 
-              isAppMode={true} 
-              onViewChange={setCurrentView} 
+            <Navbar
+              user={user}
+              isAppMode={true}
+              onViewChange={setCurrentView}
               onLogout={handleLogout}
               toggleSidebar={toggleSidebar}
               isDarkMode={isDarkMode}
               toggleTheme={toggleTheme}
             />
+            {/* Guest User Banner */}
+            {isGuestUser && (
+              <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border-b border-amber-200 dark:border-amber-800 px-4 py-3">
+                <div className="max-w-6xl mx-auto flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">👋</span>
+                    <p className="text-sm text-amber-900 dark:text-amber-200">
+                      <span className="font-semibold">You're using Guest Mode.</span> Sign up to save your work!
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setCurrentView(View.AUTH)}
+                    className="px-4 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm"
+                  >
+                    Sign Up Free
+                  </button>
+                </div>
+              </div>
+            )}
             <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 scroll-smooth relative">
               <div className="max-w-6xl mx-auto pb-10">
                 {renderContent()}
