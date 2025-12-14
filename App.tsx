@@ -167,11 +167,35 @@ const AppContainer: React.FC = () => {
   const [loadingApp, setLoadingApp] = useState(true);
 
   // User State - managed by Firebase
-  const [user, setUser] = useState<UserProfile | null>(null);
+  const [user, setUser] = useState<UserProfile | null>(() => {
+    // Restore guest user on app load if exists
+    const isGuest = localStorage.getItem('isGuestUser') === 'true';
+    if (isGuest) {
+      const guestEmail = localStorage.getItem('guestEmail') || 'guest@hashgenpro.com';
+      const guestName = localStorage.getItem('guestName') || 'Guest User';
+      return {
+        id: 'guest-' + Date.now(),
+        email: guestEmail,
+        name: guestName,
+        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(guestName)}&background=6366f1&color=fff&size=200`,
+        plan: 'free',
+        createdAt: new Date().toISOString()
+      };
+    }
+    return null;
+  });
 
   // Firebase Auth State Listener
   useEffect(() => {
     const unsubscribe = onAuthStateChange((firebaseUser) => {
+      // Don't overwrite guest user with null from Firebase
+      const isGuest = localStorage.getItem('isGuestUser') === 'true';
+
+      if (isGuest && !firebaseUser) {
+        // Skip Firebase auth update if user is in guest mode
+        return;
+      }
+
       setUser(firebaseUser);
 
       if (!firebaseUser) {
@@ -226,8 +250,10 @@ const AppContainer: React.FC = () => {
         await logoutUser();
       }
 
-      // Clear guest flag
+      // Clear guest user data
       localStorage.removeItem('isGuestUser');
+      localStorage.removeItem('guestEmail');
+      localStorage.removeItem('guestName');
 
       setUser(null);
       setCurrentView(View.HOME);

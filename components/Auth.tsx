@@ -37,7 +37,10 @@ export const Auth: React.FC<AuthProps> = ({ onSuccess, onBack, initialMode = 'lo
       plan: 'free',
       createdAt: new Date().toISOString()
     };
+    // Save guest user info to localStorage for persistence
     localStorage.setItem('isGuestUser', 'true');
+    localStorage.setItem('guestEmail', guestUser.email);
+    localStorage.setItem('guestName', guestUser.name);
     onSuccess(guestUser);
   };
 
