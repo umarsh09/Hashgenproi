@@ -27,6 +27,20 @@ export const Auth: React.FC<AuthProps> = ({ onSuccess, onBack, initialMode = 'lo
   // Store registered user temporarily
   const [registeredUser, setRegisteredUser] = useState<UserProfile | null>(null);
 
+  // Handle Skip Login - Create Guest User
+  const handleSkipLogin = () => {
+    const guestUser: UserProfile = {
+      id: 'guest-' + Date.now(),
+      email: 'guest@hashgenpro.com',
+      name: 'Guest User',
+      avatar: 'https://ui-avatars.com/api/?name=Guest&background=6366f1&color=fff&size=200',
+      plan: 'free',
+      createdAt: new Date().toISOString()
+    };
+    localStorage.setItem('isGuestUser', 'true');
+    onSuccess(guestUser);
+  };
+
   useEffect(() => {
     const storedEmail = localStorage.getItem('userEmail');
     if (storedEmail) {
@@ -412,6 +426,20 @@ export const Auth: React.FC<AuthProps> = ({ onSuccess, onBack, initialMode = 'lo
                 Continue with Google
               </button>
             </>
+          )}
+
+          {/* Skip Login Button */}
+          {mode !== 'forgot' && (
+            <div className="mt-4">
+              <button
+                type="button"
+                onClick={handleSkipLogin}
+                className="w-full py-3 bg-gray-100 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-all flex items-center justify-center gap-2"
+              >
+                <span>👤</span>
+                <span>Continue as Guest</span>
+              </button>
+            </div>
           )}
 
           {/* Toggle Mode */}
