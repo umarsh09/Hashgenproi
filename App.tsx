@@ -173,13 +173,18 @@ const AppContainer: React.FC = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChange((firebaseUser) => {
       setUser(firebaseUser);
-      if (!firebaseUser && currentView !== View.HOME) {
-        setCurrentView(View.HOME);
+
+      if (!firebaseUser) {
+        setSidebarOpen(false);
+
+        if (currentView !== View.HOME) {
+          setCurrentView(View.HOME);
+        }
       }
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [currentView]);
 
   // Initial App Load Simulation
   useEffect(() => {
