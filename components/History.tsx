@@ -13,10 +13,14 @@ export const History: React.FC<HistoryProps> = ({ history, onBack }) => {
   const [filterType, setFilterType] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const copyContent = (result: string[] | string) => {
-    const text = Array.isArray(result) ? result.join(' ') : result;
-    navigator.clipboard.writeText(text);
-    showToast('Copied to clipboard!', 'success');
+  const copyContent = async (result: string[] | string) => {
+    try {
+      const text = Array.isArray(result) ? result.join(' ') : result;
+      await navigator.clipboard.writeText(text);
+      showToast('Copied to clipboard!', 'success');
+    } catch (error) {
+      showToast('Failed to copy to clipboard', 'error');
+    }
   };
 
   // Filter and search logic

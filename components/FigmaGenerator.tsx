@@ -54,9 +54,13 @@ export const FigmaGenerator: React.FC<FigmaGeneratorProps> = ({ onGenerate, onBa
     }
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(result);
-    showToast('Copied to clipboard!', 'success');
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(result);
+      showToast('Copied to clipboard!', 'success');
+    } catch (error) {
+      showToast('Failed to copy to clipboard', 'error');
+    }
   };
 
   // Lottie-style Loader
@@ -103,7 +107,7 @@ export const FigmaGenerator: React.FC<FigmaGeneratorProps> = ({ onGenerate, onBa
 
          <div className="mb-6">
             <div className="flex justify-between items-center mb-2">
-                 <label className="block text-sm font-bold text-gray-700 dark:text-gray-300">Design Type</label>
+                 <label className="block text-sm font-bold text-gray-700 dark:text-gray-300">Language</label>
                  <select
                     value={selectedLanguage}
                     onChange={(e) => setSelectedLanguage(e.target.value)}

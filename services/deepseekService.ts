@@ -13,9 +13,6 @@ const callDeepSeekAPI = async (
 ): Promise<string> => {
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
-      console.log(`🚀 DeepSeek API Call (Attempt ${attempt + 1}/${retries})`);
-      console.log('System:', systemPrompt.substring(0, 100) + '...');
-      console.log('User:', userPrompt.substring(0, 100) + '...');
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
@@ -48,7 +45,6 @@ const callDeepSeekAPI = async (
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-        console.error('DeepSeek Proxy Error:', errorData);
 
         // If rate limited or server error, retry
         if (response.status === 429 || response.status >= 500) {
@@ -67,12 +63,9 @@ const callDeepSeekAPI = async (
         throw new Error('Empty response from API');
       }
 
-      console.log('✅ DeepSeek API Success:', content.substring(0, 100) + '...');
       return content;
 
     } catch (error: any) {
-      console.error(`DeepSeek API Call Failed (Attempt ${attempt + 1}/${retries}):`, error);
-
       // If this is the last retry, throw the error
       if (attempt === retries - 1) {
         throw error;
@@ -116,7 +109,6 @@ Requirements:
     return tags.map(tag => tag.startsWith('#') ? tag : `#${tag}`);
 
   } catch (error) {
-    console.error("DeepSeek Hashtag Generation Error:", error);
     // Return safe fallback
     return [`#${keyword.replace(/\s+/g, '')}`, `#trending`, `#${platform}`, `#viral`, `#content`];
   }
@@ -152,7 +144,6 @@ Output only the bio text.`;
     return bio.trim() || "Could not generate bio.";
 
   } catch (error) {
-    console.error("DeepSeek Bio Error:", error);
     return "Social media enthusiast ready to share amazing content! 🚀 (AI Service Unavailable)";
   }
 };
@@ -274,7 +265,6 @@ Requirements:
     return content.trim() || "Generation failed. Please try again.";
 
   } catch (error) {
-    console.error("DeepSeek Content Generation Error:", error);
     return `Error generating ${type} content. Please try again later.`;
   }
 };
@@ -320,7 +310,6 @@ Language: ${language}`;
     return analysis.trim() || "Analysis failed.";
 
   } catch (error) {
-    console.error("DeepSeek Analysis Error:", error);
     return `Error analyzing content. Please try again later.`;
   }
 };
@@ -357,7 +346,6 @@ Language: ${language}`;
     return designConcept.trim() || "Design concept generation failed.";
 
   } catch (error) {
-    console.error("DeepSeek Figma Design Error:", error);
     return `Error generating design concept. Please try again later.`;
   }
 };

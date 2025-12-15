@@ -50,9 +50,13 @@ export const UniversalGenerator: React.FC<UniversalGeneratorProps> = ({
     }
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(result);
-    showToast('Copied to clipboard!', 'success');
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(result);
+      showToast('Copied to clipboard!', 'success');
+    } catch (error) {
+      showToast('Failed to copy to clipboard', 'error');
+    }
   };
 
   // Lottie-style Loader
@@ -99,8 +103,8 @@ export const UniversalGenerator: React.FC<UniversalGeneratorProps> = ({
 
          <div className="mb-6">
             <div className="flex justify-between items-center mb-2">
-                 <label className="block text-sm font-bold text-gray-700 dark:text-gray-300">Target Platform</label>
-                 <select 
+                 <label className="block text-sm font-bold text-gray-700 dark:text-gray-300">Language</label>
+                 <select
                     value={selectedLanguage}
                     onChange={(e) => setSelectedLanguage(e.target.value)}
                     className="text-sm bg-gray-100 dark:bg-gray-700 border-none rounded-lg px-3 py-1 text-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-indigo-500 cursor-pointer outline-none"
