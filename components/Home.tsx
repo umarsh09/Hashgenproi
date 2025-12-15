@@ -12,6 +12,15 @@ interface HomeProps {
 }
 
 export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = [], isDashboard = false, onNavigate }) => {
+  // Handle Start button click with explicit handler
+  const handleStartClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onStart && typeof onStart === 'function') {
+      onStart();
+    }
+  };
+
   // Features Linked to Views
   const dashboardFeatures = [
     { title: 'Hashtag Generator', icon: '⚡', desc: 'Create viral tags', view: View.GENERATOR_HASHTAG, color: 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' },
@@ -399,9 +408,10 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
             <button
-              onClick={onStart}
+              type="button"
+              onClick={handleStartClick}
               aria-label="Start using HashGenPro for free"
-              className="w-full sm:w-auto px-10 py-4 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full font-bold text-base hover:bg-gray-800 dark:hover:bg-gray-200 transition-all transform hover:scale-105 shadow-2xl hover:shadow-indigo-500/20 flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-10 py-4 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full font-bold text-base hover:bg-gray-800 dark:hover:bg-gray-200 transition-all transform hover:scale-105 shadow-2xl hover:shadow-indigo-500/20 flex items-center justify-center gap-2 cursor-pointer"
             >
               <span aria-hidden="true">✨</span> Start for Free
             </button>
