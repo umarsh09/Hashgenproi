@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { UserProfile, GenerationResult, View } from '../types';
 import { PLATFORMS } from '../constants';
 
@@ -11,7 +11,22 @@ interface HomeProps {
   onNavigate?: (view: View) => void;
 }
 
+const APP_VERSION = 'v1.0.2-debug';
+
 export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = [], isDashboard = false, onNavigate }) => {
+  // Debug: Log when component mounts and props change
+  useEffect(() => {
+    console.log('🏠 Home component mounted/updated', {
+      version: APP_VERSION,
+      hasOnStart: typeof onStart,
+      hasOnPricing: typeof onPricing,
+      onStartValue: onStart,
+      onPricingValue: onPricing,
+      user: user?.email || 'No user',
+      timestamp: new Date().toISOString()
+    });
+  }, [onStart, onPricing, user]);
+
   // Handle Start button click with explicit handler
   const handleStartClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -565,7 +580,12 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
             ))}
           </div>
           <div className="pt-8 border-t border-gray-100 dark:border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4">
-             <p className="text-gray-400 text-sm">© {new Date().getFullYear()} HashGenPro AI. All rights reserved.</p>
+             <div className="flex flex-col sm:flex-row items-center gap-2">
+               <p className="text-gray-400 text-sm">© {new Date().getFullYear()} HashGenPro AI. All rights reserved.</p>
+               <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-xs font-mono rounded border border-indigo-200 dark:border-indigo-800">
+                 {APP_VERSION}
+               </span>
+             </div>
              <div className="flex gap-4">
                 <a href="#" aria-label="Follow us on X (Twitter)" className="focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded">
                   <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/X_icon_2.svg" className="w-6 h-6 opacity-60 hover:opacity-100 cursor-pointer transition-opacity" alt="X (Twitter)" />
