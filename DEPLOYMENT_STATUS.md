@@ -5,12 +5,19 @@
 ### Latest Changes Pushed (Dec 15, 2025)
 
 **Commits:**
-1. `73f4220` - Add comprehensive website architecture documentation
-2. `0054d16` - Fix Start Free button click handler
-3. `229afea` - Fix critical website issues
+1. `fd200ba` - Add comprehensive debug logging to CTA buttons (LATEST)
+2. `070c08e` - Add website architecture documentation
+3. `0054d16` - Fix Start Free button click handler
+4. `229afea` - Fix critical website issues
 
 **Branch:** `claude/fix-website-issues-I6MuA`
 **Status:** ✅ Pushed to GitHub
+
+**Latest Fix (fd200ba):**
+- Added debug console.log to both Start Free and Pricing buttons
+- Added alert messages if button handlers are missing
+- This will help diagnose why buttons aren't working on production
+- See `BUTTON_TESTING_GUIDE.md` for detailed testing instructions
 
 ---
 
