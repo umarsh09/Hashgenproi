@@ -16,8 +16,25 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
   const handleStartClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    console.log('🚀 Start button clicked!', { hasOnStart: typeof onStart, user });
     if (onStart && typeof onStart === 'function') {
       onStart();
+    } else {
+      console.error('❌ onStart is not a function!', onStart);
+      alert('Error: Start button handler not found. Check console.');
+    }
+  };
+
+  // Handle Pricing button click
+  const handlePricingClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('💎 Pricing button clicked!', { hasOnPricing: typeof onPricing });
+    if (onPricing && typeof onPricing === 'function') {
+      onPricing();
+    } else {
+      console.error('❌ onPricing is not a function!', onPricing);
+      alert('Error: Pricing button handler not found. Check console.');
     }
   };
 
@@ -416,9 +433,10 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
               <span aria-hidden="true">✨</span> Start for Free
             </button>
             <button
-              onClick={onPricing}
+              type="button"
+              onClick={handlePricingClick}
               aria-label="View pricing plans"
-              className="w-full sm:w-auto px-10 py-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-900 dark:text-white rounded-full font-bold text-base border-2 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-10 py-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-900 dark:text-white rounded-full font-bold text-base border-2 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2 cursor-pointer"
             >
               <span aria-hidden="true">💎</span> See Pricing
             </button>
