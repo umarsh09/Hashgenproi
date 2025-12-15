@@ -31,7 +31,7 @@ if (typeof window !== 'undefined') {
   try {
     analytics = getAnalytics(app);
   } catch (error) {
-    console.log('Analytics not available:', error);
+    // Analytics not available
   }
 }
 

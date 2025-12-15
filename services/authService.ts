@@ -8,7 +8,10 @@ import {
   signInWithPopup,
   sendPasswordResetEmail,
   sendEmailVerification,
-  onAuthStateChanged
+  onAuthStateChanged,
+  updatePassword,
+  EmailAuthProvider,
+  reauthenticateWithCredential
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../config/firebase';
@@ -92,9 +95,7 @@ export const registerUser = async (
         url: window.location.origin,
         handleCodeInApp: false
       });
-      console.log('✅ Verification email sent successfully');
     } catch (verificationError) {
-      console.error('Failed to send verification email:', verificationError);
       // Don't throw - allow user to continue even if verification email fails
     }
 
@@ -241,6 +242,30 @@ export const onAuthStateChange = (callback: (user: UserProfile | null) => void) 
 export const getCurrentUser = (): UserProfile | null => {
   const firebaseUser = auth.currentUser;
   return firebaseUser ? convertFirebaseUser(firebaseUser) : null;
+};
+
+// Update user password
+export const updateUserPassword = async (currentPassword: string, newPassword: string): Promise<boolean> => {
+  try {
+    const user = auth.currentUser;
+    if (!user || !user.email) {
+      throw new Error('No user is currently signed in');
+    }
+
+    // Reauthenticate user with current password
+    const credential = EmailAuthProvider.credential(user.email, currentPassword);
+    await reauthenticateWithCredential(user, credential);
+
+    // Update password
+    await updatePassword(user, newPassword);
+    return true;
+  } catch (error: any) {
+    console.error('Password update error:', error);
+    if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+      return false;
+    }
+    throw new Error(getAuthErrorMessage(error.code));
+  }
 };
 
 // Helper function to get user-friendly error messages

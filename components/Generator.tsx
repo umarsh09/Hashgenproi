@@ -47,9 +47,13 @@ export const Generator: React.FC<GeneratorProps> = ({ onGenerate, onBack }) => {
     }
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    showToast('Copied to clipboard!', 'success');
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast('Copied to clipboard!', 'success');
+    } catch (error) {
+      showToast('Failed to copy to clipboard', 'error');
+    }
   };
 
   const copyAll = () => {

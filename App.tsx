@@ -13,7 +13,7 @@ import { Pricing } from './components/Pricing';
 import { Settings } from './components/Settings';
 import { CustomToastProvider } from './components/CustomToast';
 import { View, GenerationResult, UserProfile } from './types';
-import { onAuthStateChange, logoutUser } from './services/authService';
+import { onAuthStateChange, logoutUser, updateUserPassword } from './services/authService';
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -281,7 +281,7 @@ const AppContainer: React.FC = () => {
       case View.HISTORY:
         return <History history={history} onBack={backToDashboard} />;
       case View.SETTINGS:
-        return <Settings user={user!} onUpdateUser={updateUserProfile} isDarkMode={isDarkMode} toggleTheme={toggleTheme} onBack={backToDashboard} />;
+        return <Settings user={user!} onUpdateUser={updateUserProfile} onUpdatePassword={updateUserPassword} isDarkMode={isDarkMode} toggleTheme={toggleTheme} onBack={backToDashboard} />;
       
       // New Tools
       case View.GENERATOR_CAPTION:

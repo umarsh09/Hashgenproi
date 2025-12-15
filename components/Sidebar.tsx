@@ -77,7 +77,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, onL
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg mr-3 shadow-lg group-hover:shadow-indigo-500/50 transition-shadow">
               #
             </div>
-            <span className="text-xl font-bold text-gray-900 dark:text-white">Genius AI</span>
+            <span className="text-xl font-bold text-gray-900 dark:text-white">HashGenPro</span>
           </div>
           
           {/* Mobile Close Button */}
