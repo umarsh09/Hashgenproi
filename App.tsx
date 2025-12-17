@@ -261,20 +261,12 @@ const AppContainer: React.FC = () => {
     switch (currentView) {
       case View.HOME:
         const handleStart = () => {
-          console.log('📱 App.tsx: handleStart called', { user: user?.email, willNavigateTo: user ? 'GENERATOR_HASHTAG' : 'AUTH' });
           setCurrentView(user ? View.GENERATOR_HASHTAG : View.AUTH);
         };
 
         const handlePricing = () => {
-          console.log('💰 App.tsx: handlePricing called', { willNavigateTo: 'PRICING' });
           setCurrentView(View.PRICING);
         };
-
-        console.log('🎨 App.tsx: Rendering Home component', {
-          hasHandleStart: typeof handleStart,
-          hasHandlePricing: typeof handlePricing,
-          user: user?.email || 'No user'
-        });
 
         return (
           <Home
@@ -323,16 +315,13 @@ const AppContainer: React.FC = () => {
         return <Analyzer type="audit" onGenerate={addToHistory} onBack={backToDashboard} />;
 
       default:
-        console.log('⚠️ App.tsx: Rendering Home (default case)');
         return <Home
           user={user}
           history={history}
           onStart={() => {
-            console.log('📱 App.tsx (default): onStart called');
             setCurrentView(View.AUTH);
           }}
           onPricing={() => {
-            console.log('💰 App.tsx (default): onPricing called');
             setCurrentView(View.PRICING);
           }}
           isDashboard={isAppMode}

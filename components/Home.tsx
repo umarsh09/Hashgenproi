@@ -11,32 +11,16 @@ interface HomeProps {
   onNavigate?: (view: View) => void;
 }
 
-const APP_VERSION = 'v1.0.2-debug';
+const APP_VERSION = 'v1.0.3';
 
 export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = [], isDashboard = false, onNavigate }) => {
-  // Debug: Log when component mounts and props change
-  useEffect(() => {
-    console.log('🏠 Home component mounted/updated', {
-      version: APP_VERSION,
-      hasOnStart: typeof onStart,
-      hasOnPricing: typeof onPricing,
-      onStartValue: onStart,
-      onPricingValue: onPricing,
-      user: user?.email || 'No user',
-      timestamp: new Date().toISOString()
-    });
-  }, [onStart, onPricing, user]);
 
   // Handle Start button click with explicit handler
   const handleStartClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('🚀 Start button clicked!', { hasOnStart: typeof onStart, user });
     if (onStart && typeof onStart === 'function') {
       onStart();
-    } else {
-      console.error('❌ onStart is not a function!', onStart);
-      alert('Error: Start button handler not found. Check console.');
     }
   };
 
@@ -44,12 +28,8 @@ export const Home: React.FC<HomeProps> = ({ onStart, onPricing, user, history = 
   const handlePricingClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('💎 Pricing button clicked!', { hasOnPricing: typeof onPricing });
     if (onPricing && typeof onPricing === 'function') {
       onPricing();
-    } else {
-      console.error('❌ onPricing is not a function!', onPricing);
-      alert('Error: Pricing button handler not found. Check console.');
     }
   };
 
