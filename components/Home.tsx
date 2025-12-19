@@ -49,20 +49,32 @@ export const Home: React.FC<HomeProps> = ({
   onNavigate,
 }) => {
 
+  /* ----------------------------- STATE ----------------------------- */
+
+  const [loadingAction, setLoadingAction] = React.useState<'start' | 'pricing' | null>(null);
+
   /* ----------------------------- HANDLERS ----------------------------- */
 
   const handleStart = useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault();
-      onStart();
+    () => {
+      setLoadingAction('start');
+      // Small delay to show loading state
+      setTimeout(() => {
+        onStart();
+        setLoadingAction(null);
+      }, 100);
     },
     [onStart]
   );
 
   const handlePricing = useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault();
-      onPricing();
+    () => {
+      setLoadingAction('pricing');
+      // Small delay to show loading state
+      setTimeout(() => {
+        onPricing();
+        setLoadingAction(null);
+      }, 100);
     },
     [onPricing]
   );
@@ -103,16 +115,34 @@ export const Home: React.FC<HomeProps> = ({
 
           <div className="flex gap-3">
             <button
-              onClick={() => onNavigate?.(View.GENERATOR_HASHTAG)}
-              className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5"
+              onClick={() => {
+                setLoadingAction('start');
+                setTimeout(() => {
+                  onNavigate?.(View.GENERATOR_HASHTAG);
+                  setLoadingAction(null);
+                }, 100);
+              }}
+              disabled={loadingAction !== null}
+              className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              ⚡ Generate
+              {loadingAction === 'start' ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <span>Loading...</span>
+                </>
+              ) : (
+                <>
+                  <span>⚡</span>
+                  <span>Generate</span>
+                </>
+              )}
             </button>
             <button
               onClick={() => onNavigate?.(View.HISTORY)}
-              className="px-6 py-3 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold rounded-xl border-2 border-gray-200 dark:border-gray-700 transition-all"
+              className="px-6 py-3 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold rounded-xl border-2 border-gray-200 dark:border-gray-700 transition-all flex items-center gap-2"
             >
-              📜 History
+              <span>📜</span>
+              <span>History</span>
             </button>
           </div>
         </header>
@@ -221,15 +251,37 @@ export const Home: React.FC<HomeProps> = ({
         <div className="flex flex-col sm:flex-row justify-center gap-4">
           <button
             onClick={handleStart}
-            className="px-10 py-4 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full font-bold text-base hover:bg-gray-800 dark:hover:bg-gray-200 transition-all transform hover:scale-105 shadow-2xl flex items-center justify-center gap-2"
+            disabled={loadingAction !== null}
+            className="px-10 py-4 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full font-bold text-base hover:bg-gray-800 dark:hover:bg-gray-200 transition-all transform hover:scale-105 shadow-2xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
-            ✨ Start Free
+            {loadingAction === 'start' ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white/30 dark:border-gray-900/30 border-t-white dark:border-t-gray-900 rounded-full animate-spin"></div>
+                <span>Loading...</span>
+              </>
+            ) : (
+              <>
+                <span>✨</span>
+                <span>Start Free</span>
+              </>
+            )}
           </button>
           <button
             onClick={handlePricing}
-            className="px-10 py-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-900 dark:text-white rounded-full font-bold text-base border-2 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2"
+            disabled={loadingAction !== null}
+            className="px-10 py-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-900 dark:text-white rounded-full font-bold text-base border-2 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
-            💎 Pricing
+            {loadingAction === 'pricing' ? (
+              <>
+                <div className="w-5 h-5 border-2 border-gray-900/30 dark:border-white/30 border-t-gray-900 dark:border-t-white rounded-full animate-spin"></div>
+                <span>Loading...</span>
+              </>
+            ) : (
+              <>
+                <span>💎</span>
+                <span>Pricing</span>
+              </>
+            )}
           </button>
         </div>
 
