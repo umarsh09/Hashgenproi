@@ -297,10 +297,14 @@ const AppContainer: React.FC = () => {
     switch (currentView) {
       case View.HOME:
         const handleStart = () => {
-          setCurrentView(user ? View.GENERATOR_HASHTAG : View.AUTH);
+          console.log('App.tsx handleStart called, user:', user);
+          const nextView = user ? View.GENERATOR_HASHTAG : View.AUTH;
+          console.log('Navigating to:', nextView);
+          setCurrentView(nextView);
         };
 
         const handlePricing = () => {
+          console.log('App.tsx handlePricing called');
           setCurrentView(View.PRICING);
         };
 

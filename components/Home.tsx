@@ -57,24 +57,18 @@ export const Home: React.FC<HomeProps> = ({
 
   const handleStart = useCallback(
     () => {
+      console.log('Start button clicked');
       setLoadingAction('start');
-      // Small delay to show loading state
-      setTimeout(() => {
-        onStart();
-        setLoadingAction(null);
-      }, 100);
+      onStart();
     },
     [onStart]
   );
 
   const handlePricing = useCallback(
     () => {
+      console.log('Pricing button clicked');
       setLoadingAction('pricing');
-      // Small delay to show loading state
-      setTimeout(() => {
-        onPricing();
-        setLoadingAction(null);
-      }, 100);
+      onPricing();
     },
     [onPricing]
   );
@@ -116,11 +110,9 @@ export const Home: React.FC<HomeProps> = ({
           <div className="flex gap-3">
             <button
               onClick={() => {
+                console.log('Dashboard Generate clicked');
                 setLoadingAction('start');
-                setTimeout(() => {
-                  onNavigate?.(View.GENERATOR_HASHTAG);
-                  setLoadingAction(null);
-                }, 100);
+                onNavigate?.(View.GENERATOR_HASHTAG);
               }}
               disabled={loadingAction !== null}
               className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
