@@ -57,7 +57,6 @@ export const Home: React.FC<HomeProps> = ({
 
   const handleStart = useCallback(
     () => {
-      console.log('Start button clicked');
       setLoadingAction('start');
       onStart();
     },
@@ -66,7 +65,6 @@ export const Home: React.FC<HomeProps> = ({
 
   const handlePricing = useCallback(
     () => {
-      console.log('Pricing button clicked');
       setLoadingAction('pricing');
       onPricing();
     },
@@ -110,7 +108,6 @@ export const Home: React.FC<HomeProps> = ({
           <div className="flex gap-3">
             <button
               onClick={() => {
-                console.log('Dashboard Generate clicked');
                 setLoadingAction('start');
                 onNavigate?.(View.GENERATOR_HASHTAG);
               }}
