@@ -307,3 +307,5 @@ export const Settings: React.FC<SettingsProps> = ({ user, onUpdateUser, onUpdate
     </div>
   );
 };
+
+export default Settings;

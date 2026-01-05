@@ -7,15 +7,15 @@ import { View, GenerationResult, UserProfile } from './types';
 import { onAuthStateChange, logoutUser, updateUserPassword } from './services/authService';
 
 // Lazy load components for code splitting
-const Generator = lazy(() => import('./components/Generator').then(m => ({ default: m.Generator })));
-const BioGenerator = lazy(() => import('./components/BioGenerator').then(m => ({ default: m.BioGenerator })));
-const UniversalGenerator = lazy(() => import('./components/UniversalGenerator').then(m => ({ default: m.UniversalGenerator })));
-const FigmaGenerator = lazy(() => import('./components/FigmaGenerator').then(m => ({ default: m.FigmaGenerator })));
-const Analyzer = lazy(() => import('./components/Analyzer').then(m => ({ default: m.Analyzer })));
-const History = lazy(() => import('./components/History').then(m => ({ default: m.History })));
-const Auth = lazy(() => import('./components/Auth').then(m => ({ default: m.Auth })));
-const Pricing = lazy(() => import('./components/Pricing').then(m => ({ default: m.Pricing })));
-const Settings = lazy(() => import('./components/Settings').then(m => ({ default: m.Settings })));
+const Generator = lazy(() => import('./components/Generator'));
+const BioGenerator = lazy(() => import('./components/BioGenerator'));
+const UniversalGenerator = lazy(() => import('./components/UniversalGenerator'));
+const FigmaGenerator = lazy(() => import('./components/FigmaGenerator'));
+const Analyzer = lazy(() => import('./components/Analyzer'));
+const History = lazy(() => import('./components/History'));
+const Auth = lazy(() => import('./components/Auth'));
+const Pricing = lazy(() => import('./components/Pricing'));
+const Settings = lazy(() => import('./components/Settings'));
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;

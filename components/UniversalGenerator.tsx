@@ -176,3 +176,5 @@ export const UniversalGenerator: React.FC<UniversalGeneratorProps> = ({
     </div>
   );
 };
+
+export default UniversalGenerator;

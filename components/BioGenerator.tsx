@@ -235,3 +235,5 @@ export const BioGenerator: React.FC<BioGeneratorProps> = ({ onGenerate, onBack }
     </div>
   );
 };
+
+export default BioGenerator;

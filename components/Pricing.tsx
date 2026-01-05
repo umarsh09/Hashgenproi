@@ -110,3 +110,5 @@ export const Pricing: React.FC<PricingProps> = ({ onSelectPlan, onBack, isLogged
     </div>
   );
 };
+
+export default Pricing;

@@ -699,3 +699,5 @@ export const Auth: React.FC<AuthProps> = ({ onSuccess, onBack, initialMode = 'lo
     </div>
   );
 };
+
+export default Auth;

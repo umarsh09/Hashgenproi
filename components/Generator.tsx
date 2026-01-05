@@ -237,3 +237,5 @@ export const Generator: React.FC<GeneratorProps> = ({ onGenerate, onBack }) => {
     </div>
   );
 };
+
+export default Generator;
