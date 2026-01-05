@@ -57,7 +57,9 @@ export const Home: React.FC<HomeProps> = ({
 
   const handleStart = useCallback(
     () => {
+      console.log('[HOME] handleStart called');
       setLoadingAction('start');
+      console.log('[HOME] Calling onStart');
       onStart();
     },
     [onStart]
@@ -65,7 +67,9 @@ export const Home: React.FC<HomeProps> = ({
 
   const handlePricing = useCallback(
     () => {
+      console.log('[HOME] handlePricing called');
       setLoadingAction('pricing');
+      console.log('[HOME] Calling onPricing');
       onPricing();
     },
     [onPricing]

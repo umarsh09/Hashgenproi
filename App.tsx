@@ -186,14 +186,17 @@ const SplashLoader = () => {
 };
 
 // Loading Fallback for Lazy Components
-const ComponentLoader = () => (
-  <div className="flex items-center justify-center min-h-[400px]">
-    <div className="text-center">
-      <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
-      <p className="text-gray-500 dark:text-gray-400">Loading...</p>
+const ComponentLoader = () => {
+  console.log('[LOADER] ComponentLoader is being displayed');
+  return (
+    <div className="flex items-center justify-center min-h-[400px]">
+      <div className="text-center">
+        <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
+        <p className="text-gray-500 dark:text-gray-400">Loading...</p>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // Main App Container
 const AppContainer: React.FC = () => {
@@ -304,17 +307,23 @@ const AppContainer: React.FC = () => {
 
   // Render Logic
   const renderContent = () => {
+    console.log('[RENDER] renderContent called with currentView:', currentView);
     const backToDashboard = () => setCurrentView(View.HOME);
 
     switch (currentView) {
       case View.HOME:
         const handleStart = () => {
+          console.log('[DEBUG] handleStart called, user:', user);
           const nextView = user ? View.GENERATOR_HASHTAG : View.AUTH;
+          console.log('[DEBUG] Setting view to:', nextView);
           setCurrentView(nextView);
+          console.log('[DEBUG] currentView after set:', currentView);
         };
 
         const handlePricing = () => {
+          console.log('[DEBUG] handlePricing called');
           setCurrentView(View.PRICING);
+          console.log('[DEBUG] Setting view to PRICING');
         };
 
         return (
@@ -328,8 +337,10 @@ const AppContainer: React.FC = () => {
           />
         );
       case View.AUTH:
+        console.log('[RENDER] Rendering AUTH component');
         return <Auth onSuccess={handleAuthSuccess} onBack={backToDashboard} />;
       case View.PRICING:
+        console.log('[RENDER] Rendering PRICING component');
         return <Pricing onSelectPlan={() => setCurrentView(user ? View.GENERATOR_HASHTAG : View.AUTH)} onBack={backToDashboard} isLoggedIn={!!user} />;
       case View.GENERATOR_HASHTAG:
         return <Generator onGenerate={addToHistory} onBack={backToDashboard} />;
