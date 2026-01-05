@@ -1,19 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
-import { Generator } from './components/Generator';
-import { BioGenerator } from './components/BioGenerator';
-import { UniversalGenerator } from './components/UniversalGenerator';
-import { FigmaGenerator } from './components/FigmaGenerator';
-import { Analyzer } from './components/Analyzer';
-import { History } from './components/History';
 import { Home } from './components/Home';
-import { Auth } from './components/Auth';
-import { Pricing } from './components/Pricing';
-import { Settings } from './components/Settings';
 import { CustomToastProvider } from './components/CustomToast';
 import { View, GenerationResult, UserProfile } from './types';
 import { onAuthStateChange, logoutUser, updateUserPassword } from './services/authService';
+
+// Lazy load components for code splitting
+const Generator = lazy(() => import('./components/Generator').then(m => ({ default: m.Generator })));
+const BioGenerator = lazy(() => import('./components/BioGenerator').then(m => ({ default: m.BioGenerator })));
+const UniversalGenerator = lazy(() => import('./components/UniversalGenerator').then(m => ({ default: m.UniversalGenerator })));
+const FigmaGenerator = lazy(() => import('./components/FigmaGenerator').then(m => ({ default: m.FigmaGenerator })));
+const Analyzer = lazy(() => import('./components/Analyzer').then(m => ({ default: m.Analyzer })));
+const History = lazy(() => import('./components/History').then(m => ({ default: m.History })));
+const Auth = lazy(() => import('./components/Auth').then(m => ({ default: m.Auth })));
+const Pricing = lazy(() => import('./components/Pricing').then(m => ({ default: m.Pricing })));
+const Settings = lazy(() => import('./components/Settings').then(m => ({ default: m.Settings })));
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -183,6 +185,16 @@ const SplashLoader = () => {
   );
 };
 
+// Loading Fallback for Lazy Components
+const ComponentLoader = () => (
+  <div className="flex items-center justify-center min-h-[400px]">
+    <div className="text-center">
+      <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
+      <p className="text-gray-500 dark:text-gray-400">Loading...</p>
+    </div>
+  </div>
+);
+
 // Main App Container
 const AppContainer: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>(View.HOME);
@@ -297,14 +309,11 @@ const AppContainer: React.FC = () => {
     switch (currentView) {
       case View.HOME:
         const handleStart = () => {
-          console.log('App.tsx handleStart called, user:', user);
           const nextView = user ? View.GENERATOR_HASHTAG : View.AUTH;
-          console.log('Navigating to:', nextView);
           setCurrentView(nextView);
         };
 
         const handlePricing = () => {
-          console.log('App.tsx handlePricing called');
           setCurrentView(View.PRICING);
         };
 
@@ -418,7 +427,9 @@ const AppContainer: React.FC = () => {
             )}
             <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 scroll-smooth relative">
               <div className="max-w-6xl mx-auto pb-10">
-                {renderContent()}
+                <Suspense fallback={<ComponentLoader />}>
+                  {renderContent()}
+                </Suspense>
               </div>
             </main>
           </div>
@@ -437,7 +448,9 @@ const AppContainer: React.FC = () => {
             />
           )}
           <main className="flex-grow">
-            {renderContent()}
+            <Suspense fallback={<ComponentLoader />}>
+              {renderContent()}
+            </Suspense>
           </main>
         </div>
       )}

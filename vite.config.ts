@@ -16,6 +16,18 @@ export default defineConfig(() => {
         alias: {
           '@': path.resolve(__dirname, '.'),
         }
+      },
+      build: {
+        rollupOptions: {
+          output: {
+            manualChunks: {
+              'react-vendor': ['react', 'react-dom'],
+              'firebase-vendor': ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/analytics'],
+              'ui-vendor': ['lucide-react', 'react-hot-toast'],
+            }
+          }
+        },
+        chunkSizeWarningLimit: 600,
       }
     };
 });
