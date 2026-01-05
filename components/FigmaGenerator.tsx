@@ -184,3 +184,5 @@ export const FigmaGenerator: React.FC<FigmaGeneratorProps> = ({ onGenerate, onBa
     </div>
   );
 };
+
+export default FigmaGenerator;

@@ -249,3 +249,5 @@ export const History: React.FC<HistoryProps> = ({ history, onBack }) => {
     </div>
   );
 };
+
+export default History;

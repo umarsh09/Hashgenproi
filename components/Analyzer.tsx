@@ -143,3 +143,5 @@ export const Analyzer: React.FC<AnalyzerProps> = ({ type, onGenerate, onBack }) 
     </div>
   );
 };
+
+export default Analyzer;
